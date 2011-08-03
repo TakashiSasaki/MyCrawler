@@ -4,12 +4,12 @@
     <!-- These values are edited/maintained by Titanium Developer -->
     <id>cx.windy.obomb</id>
     <name>obomb</name>
-    <version>1.0</version>
+    <version>0.0.0</version>
     <publisher>sasaki</publisher>
     <url>http://twitter.com/TakashiSasaki</url>
-    <description>not specified</description>
+    <description>Object oriented metadatabase</description>
     <icon>default_app_logo.png</icon>
-    <copyright>2011 by sasaki</copyright>
+    <copyright>2011 by Takashi Sasaki</copyright>
     <!-- Window Definition - these values can be edited -->
     <window>
         <id>initial</id>
