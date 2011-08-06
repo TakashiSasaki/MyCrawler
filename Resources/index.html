@@ -14,6 +14,8 @@
 				python_version_element.innerHTML = GetVersion.GetVersion();
 				var python_result_element = document.getElementById("python_result");
 				python_result_element.innerHTML = GaeAdopter._main();
+				var python_path_element = document.getElementById("python_path");
+				python_path_element.innerHTML = GetVersion.GetSysPath();
 			}
 		</script>
 		<input type="button" onclick="OnClickHandler();" value="click to execute python function."/>
@@ -22,6 +24,9 @@
 		</p>
 		<p id="python_result">
 			The result will appear here.
+		</p>
+		<p id="python_path">
+			The value of sys.path will appear here.  
 		</p>
 	</body>
 </html>
