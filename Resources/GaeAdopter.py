@@ -4,7 +4,7 @@
 @license: Apache License 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
 @copyright: Takashi SASAKI, 2011
 '''
-
+from __future__ import with_statement
 from google.appengine.api import apiproxy_stub_map  
 class GaeAdoptor(object):
     def __init__(self, app_id="app", datastore_path="app.db", blobstore_path="app.blob"):
@@ -72,6 +72,7 @@ def _main():
         f.write('data')
     files.finalize(file_name)
     blob_key = files.blobstore.get_blob_key(file_name)
+    return "GaeAdopter._main() finished."
 
 if __name__ == "__main__":
     _main()
