@@ -3,3 +3,6 @@ tmp
 *.class
 *.pyc
 *.pyo
+Resources/tracer_results
+Resources/app.blob
+Resources/app.db
