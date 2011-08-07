@@ -1,33 +1,22 @@
 <html>
 	<head>
 		<title>Using GaeAdopter.py from Titanium Desktop</title>
-		<script type="text/python">
-			import GetVersion
-			import GaeAdopter
-		</script>
-		<script type="text/javascript" src="index.js"></script>
-	</head>
-	<body>
 		<script type="text/javascript">
-			function OnClickHandler() {
-				var python_version_element = document.getElementById("python_version");
-				python_version_element.innerHTML = GetVersion.GetVersion();
-				var python_result_element = document.getElementById("python_result");
-				python_result_element.innerHTML = GaeAdopter._main();
-				var python_path_element = document.getElementById("python_path");
-				python_path_element.innerHTML = GetVersion.GetSysPath();
+			var statusWindow = null;
+			function OpenStatusWindow() {
+				if (statusWindow==null || !statusWindow.isActive()) {
+					statusWindow = Titanium.UI.createWindow({
+						id: "statusWindow",
+						url: "app://statusWindow.html"
+					});
+					statusWindow.open();
+				} else {
+					statusWindow.focus();
+				}
 			}
 		</script>
+	</head>
+	<body>
 		<input type="button" onclick="OpenStatusWindow();" value="open status window"/>
-		<input type="button" onclick="OnClickHandler();" value="click to execute python function."/>
-		<p id="python_version">
-			The version of Python interpreter will appear here.
-		</p>
-		<p id="python_result">
-			The result will appear here.
-		</p>
-		<p id="python_path">
-			The value of sys.path will appear here.  
-		</p>
 	</body>
 </html>

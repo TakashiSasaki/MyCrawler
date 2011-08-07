@@ -1,11 +1,11 @@
-#appname: obomb
-#publisher: sasaki
-#url: http://twitter.com/TakashiSasaki
-#image: default_app_logo.png
-#appid: cx.windy.obomb
-#desc: undefined
-#type: desktop
-#guid: 384dd6ef-1acb-4ab1-a1c8-06bc8c997466
+#appname:obomb
+#publisher:sasaki
+#url:http://twitter.com/TakashiSasaki
+#image:default_app_logo.png
+#appid:cx.windy.obomb
+#desc:Object oriented metadatabase
+#type:desktop
+#guid:384dd6ef-1acb-4ab1-a1c8-06bc8c997466
 runtime:1.1.0
 tiapp:1.1.0
 tifilesystem:1.1.0

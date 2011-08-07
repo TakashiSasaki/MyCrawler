@@ -1,8 +1,31 @@
 <html>
 	<head>
-		<title>status</title>
+		<title>statusWindow</title>
+		<script type="text/python">
+			import GetVersion
+			import GaeAdopter
+		</script>
+		<script type="text/javascript">
+			function OnLoadHandler() {
+				var python_version_element = document.getElementById("python_version");
+				python_version_element.innerHTML = GetVersion.GetVersion();
+				var python_result_element = document.getElementById("python_result");
+				python_result_element.innerHTML = GaeAdopter._main();
+				var python_path_element = document.getElementById("python_path");
+				python_path_element.innerHTML = GetVersion.GetSysPath();
+			}
+		</script>
 	</head>
-	<body>
-		<p>status</p>
+	<body onload="OnLoadHandler();">
+		<p id="python_version">
+			The version of Python interpreter will appear here.
+		</p>
+		<p id="python_result">
+			The result will appear here.
+		</p>
+		<p id="python_path">
+			The value of sys.path will appear here.  
+		</p>
+		<input type="button" onclick="OnLoadHandler();" value="refresh"/>
 	</body>
 </html>
