@@ -21,9 +21,10 @@
 				document.getElementById("application_name").innerHTML = Titanium.App.getName();
 				document.getElementById("application_path").innerHTML = Titanium.App.getPath();
 				document.getElementById("application_publisher").innerHTML = Titanium.App.getPublisher();
-				document.getElementById("application_stream_url").innerHTML = Titanium.App.getStreamURL();
+				document.getElementById("application_stream_url").innerHTML = Titanium.App.getStreamURL("release-list");
 				document.getElementById("application_version").innerHTML = Titanium.App.getVersion();
 				document.getElementById("current_directory").innerHTML = GetCurrentDirectory();
+				document.getElementById("titanium_platform_id").innerHTML = Titanium.Platform.id;
 			}
 		</script>
 	</head>
@@ -57,15 +58,15 @@
 				alert("UpdateObomb()")
 				Titanium.UpdateManager.cacnelMonitor();
 			}
-
 			var UpdateCheckedCallback = function() {
 				alert("UpdateCheckedCallback()");
 			}
 			Titanium.UpdateManager.onupdate="UpdateObomb";
-		
-			Titanium.UpdateManager.startMonitor("384dd6ef-1acb-4ab1-a1c8-06bc8c997466", function(details){alert(123);}, 1000);
+			Ti.UpdateManager.startMonitor("mobilesdk", function(details){alert(123);}, 1000);
 		</script>
 		<h1>Runtime environment</h1>
+		<h2>Titanium Platform ID</h2>
+		<p id="titanium_platform_id"></p>
 		<h2>Current directory</h2>
 		<p id="current_directory">
 		</p>
