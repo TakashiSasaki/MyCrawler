@@ -6,7 +6,7 @@
 '''
 from __future__ import with_statement
 from google.appengine.api import apiproxy_stub_map  
-class GaeAdoptor(object):
+class GaeAdopter(object):
     def __init__(self, app_id="app", datastore_path="app.db", blobstore_path="app.blob"):
         self.app_id = app_id
         import os
