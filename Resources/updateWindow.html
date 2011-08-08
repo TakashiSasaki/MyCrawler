@@ -1,0 +1,73 @@
+<html>
+	<head>
+		<title>Update Obomb</title>
+		<script type="text/javascript">
+			function onloadHandler() {
+				document.getElementById("mid").innerText=Titanium.Platform.id;
+				document.getElementById("guid").innerText=Titanium.App.getGUID();
+				document.getElementById("version").value = Titanium.App.getVersion();
+			}
+
+			function onclickHandler() {
+				var xhr = Titanium.Network.createHTTPClient();
+				xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+				qs = 'version='
+				+Titanium.Network.encodeURIComponent(document.getElementById("version").value)
+				+'&name='
+				+Titanium.Network.encodeURIComponent(document.getElementById("component").value)
+				+'&mid='+Titanium.Network.encodeURIComponent(document.getElementById("mid").innerText)
+				+'&limit=100'
+				+'&guid='+Titanium.Network.encodeURIComponent(document.getElementById("guid").innerText);
+				document.getElementById("query_string").innerText = qs;
+				url = Titanium.App.getStreamURL("release-list");
+				document.getElementById("url").innerText = url;
+				xhr.onreadystatechange = function() {
+					if (this.readyState == 4) {
+						document.getElementById("response").innerText = this.responseText;
+					} else {
+						document.getElementById("response").innerText = this.readyState;
+					}
+				}
+				xhr.open("POST", url, true);
+				xhr.send(qs);
+			}
+		</script>
+	</head>
+	<body onload="onloadHandler();">
+		<table>
+			<tr>
+				<td>version</td>
+				<td>
+				<input type="text" size="10" name="version" id="version"/>
+				</td>
+			</tr>
+			<tr>
+				<td>component</td>
+				<td>
+				<input type="text" size="25" name="component" id="component"/>
+				</td>
+			</tr>
+			<tr>
+				<td>mid</td>
+				<td id="mid"></td>
+			</tr>
+			<tr>
+				<td>guid</td>
+				<td id="guid"></td>
+			</tr>
+		</table>
+		<table>
+			<tr>
+				<td>query string</td>
+				<td id="query_string"></td>
+			</tr>
+			<tr>
+				<td>url</td>
+				<td id="url"></td>
+			</tr>
+		</table>
+		<textarea rows="10" cols="60" id="response">
+		</textarea>
+		<input type="button" onclick="onclickHandler();" value="post"/>
+	</body>
+</html>

@@ -14,9 +14,23 @@
 					statusWindow.focus();
 				}
 			}
+
+			var updateWindow = null;
+			function OpenUpdateWindow() {
+				if (updateWindow==null || !updateWindow.isActive()) {
+					updateWindow = Titanium.UI.createWindow({
+						id: "updateWindow",
+						url: "app://updateWindow.html"
+					});
+					updateWindow.open();
+				} else {
+					updateWindow.focus();
+				}
+			}
 		</script>
 	</head>
 	<body>
 		<input type="button" onclick="OpenStatusWindow();" value="open status window"/>
+		<input type="button" onclick="OpenUpdateWindow();" value="open update window"/>
 	</body>
 </html>

@@ -58,15 +58,19 @@
 				alert("UpdateObomb()")
 				Titanium.UpdateManager.cacnelMonitor();
 			}
+
 			var UpdateCheckedCallback = function() {
 				alert("UpdateCheckedCallback()");
 			}
 			Titanium.UpdateManager.onupdate="UpdateObomb";
-			Ti.UpdateManager.startMonitor("mobilesdk", function(details){alert(123);}, 1000);
+			Ti.UpdateManager.startMonitor("mobilesdk", function(details) {
+				alert(123);
+			}, 1000);
 		</script>
 		<h1>Runtime environment</h1>
 		<h2>Titanium Platform ID</h2>
-		<p id="titanium_platform_id"></p>
+		<p id="titanium_platform_id">
+		</p>
 		<h2>Current directory</h2>
 		<p id="current_directory">
 		</p>
