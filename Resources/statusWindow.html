@@ -28,24 +28,6 @@
 		</script>
 	</head>
 	<body onload="OnLoadHandler();">
-		<h1>Runtime environment</h1>
-		<h2>Current directory</h2>
-		<p id="current_directory">
-		</p>
-		<h1>Python environment</h1>
-		<h2>Python interpreter</h2>
-		<p id="python_version">
-			The version of Python interpreter will appear here.
-		</p>
-		<h2>Python sys.path</h2>
-		<p id="python_path">
-			The value of sys.path will appear here.
-		</p>
-		<h2>Home directory</h2>
-		<p id="python_user_directory">
-		</p>
-		<h2>Application data directory</h2>
-		<p id="application_data_directory"></p>
 		<h1>Application info</h1>
 		<h2>Application GUID</h2>
 		<p id="application_guid">
@@ -67,6 +49,40 @@
 		</p>
 		<h2>Application version</h2>
 		<p id="application_version">
+		</p>
+		<h2>Application update</h2>
+		<script type="text/javascript">
+			// I can't get it worked.
+			function UpdateObomb() {
+				alert("UpdateObomb()")
+				Titanium.UpdateManager.cacnelMonitor();
+			}
+
+			var UpdateCheckedCallback = function() {
+				alert("UpdateCheckedCallback()");
+			}
+			Titanium.UpdateManager.onupdate="UpdateObomb";
+		
+			Titanium.UpdateManager.startMonitor("384dd6ef-1acb-4ab1-a1c8-06bc8c997466", function(details){alert(123);}, 1000);
+		</script>
+		<h1>Runtime environment</h1>
+		<h2>Current directory</h2>
+		<p id="current_directory">
+		</p>
+		<h1>Python environment</h1>
+		<h2>Python interpreter</h2>
+		<p id="python_version">
+			The version of Python interpreter will appear here.
+		</p>
+		<h2>Python sys.path</h2>
+		<p id="python_path">
+			The value of sys.path will appear here.
+		</p>
+		<h2>Home directory</h2>
+		<p id="python_user_directory">
+		</p>
+		<h2>Application data directory</h2>
+		<p id="application_data_directory">
 		</p>
 		<input type="button" onclick="OnLoadHandler();" value="refresh"/>
 	</body>

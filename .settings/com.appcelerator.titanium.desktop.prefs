@@ -1,27 +1,27 @@
-#Mon Aug 08 00:55:05 JST 2011
+#Mon Aug 08 23:35:40 JST 2011
 DESKTOP_PROJECT_SDK_VERSION=1.1.0
 eclipse.preferences.version=1
 packages/Linux\ Intel\ 32-bit/app_page=http\://api.appcelerator.net/p/pages/app_page?token\=R4svBs04
-packages/Linux\ Intel\ 32-bit/app_version=0.0.4
+packages/Linux\ Intel\ 32-bit/app_version=0.0.5
 packages/Linux\ Intel\ 32-bit/label=Linux Intel 32-bit
 packages/Linux\ Intel\ 32-bit/platform=linux
 packages/Linux\ Intel\ 32-bit/pubdate=2011-08-03 06\:51\:23
-packages/Linux\ Intel\ 32-bit/url=http\://api.appcelerator.net/p/v1/download?token\=W4sy6Zs6
+packages/Linux\ Intel\ 32-bit/url=http\://api.appcelerator.net/p/v1/download?token\=x4syHad0
 packages/Linux\ Intel\ 64-bit/app_page=http\://api.appcelerator.net/p/pages/app_page?token\=R4svBs04
-packages/Linux\ Intel\ 64-bit/app_version=0.0.4
+packages/Linux\ Intel\ 64-bit/app_version=0.0.5
 packages/Linux\ Intel\ 64-bit/label=Linux Intel 64-bit
 packages/Linux\ Intel\ 64-bit/platform=linux
 packages/Linux\ Intel\ 64-bit/pubdate=2011-08-03 06\:51\:23
-packages/Linux\ Intel\ 64-bit/url=http\://api.appcelerator.net/p/v1/download?token\=M4sy6ZS6
+packages/Linux\ Intel\ 64-bit/url=http\://api.appcelerator.net/p/v1/download?token\=j4syHa74
 packages/OSX\ 10.5\ Intel/app_page=http\://api.appcelerator.net/p/pages/app_page?token\=R4svBs04
-packages/OSX\ 10.5\ Intel/app_version=0.0.4
+packages/OSX\ 10.5\ Intel/app_version=0.0.5
 packages/OSX\ 10.5\ Intel/label=OSX 10.5 Intel
 packages/OSX\ 10.5\ Intel/platform=osx
 packages/OSX\ 10.5\ Intel/pubdate=2011-08-03 06\:51\:23
-packages/OSX\ 10.5\ Intel/url=http\://api.appcelerator.net/p/v1/download?token\=M4sy6Z84
+packages/OSX\ 10.5\ Intel/url=http\://api.appcelerator.net/p/v1/download?token\=D4syH9Y5
 packages/Windows\ 32-bit/app_page=http\://api.appcelerator.net/p/pages/app_page?token\=R4svBs04
-packages/Windows\ 32-bit/app_version=0.0.4
+packages/Windows\ 32-bit/app_version=0.0.5
 packages/Windows\ 32-bit/label=Windows 32-bit
 packages/Windows\ 32-bit/platform=win32
 packages/Windows\ 32-bit/pubdate=2011-08-03 06\:51\:23
-packages/Windows\ 32-bit/url=http\://api.appcelerator.net/p/v1/download?token\=V4sy6ZT0
+packages/Windows\ 32-bit/url=http\://api.appcelerator.net/p/v1/download?token\=C4syHaQ0
