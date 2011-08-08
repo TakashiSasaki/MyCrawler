@@ -47,7 +47,7 @@ def _main():
         content = db.StringProperty(multiline=True)
         date = db.DateTimeProperty(auto_now_add=True)
         
-    gae_adoptor = GaeAdoptor()
+    gae_adopter = GaeAdopter()
 
     import logging
     logging.getLogger().setLevel(logging.DEBUG)
