@@ -5,8 +5,15 @@
 @copyright: Takashi SASAKI, 2011
 '''
 from __future__ import with_statement
-from google.appengine.api import apiproxy_stub_map  
+from google.appengine.api import apiproxy_stub_map
+import google.appengine.ext.db
+import google.appengine.api.files
+
 class GaeAdopter(object):
+    
+    db = google.appengine.ext.db
+    files = google.appengine.api.files
+    
     def __init__(self, app_id="app", datastore_path="app.db", blobstore_path="app.blob"):
         self.app_id = app_id
         import os
@@ -41,13 +48,12 @@ class GaeAdopter(object):
             file_service_stub.FileServiceStub(blob_storage))
 
 def _main():
-    from google.appengine.ext import db
-    class Greeting(db.Model):
-        author = db.UserProperty()
-        content = db.StringProperty(multiline=True)
-        date = db.DateTimeProperty(auto_now_add=True)
-        
     gae_adopter = GaeAdopter()
+    class Greeting(gae_adopter.db.Model):
+        author = gae_adopter.db.UserProperty()
+        content = gae_adopter.db.StringProperty(multiline=True)
+        date = gae_adopter.db.DateTimeProperty(auto_now_add=True)
+        
 
     import logging
     logging.getLogger().setLevel(logging.DEBUG)
@@ -57,7 +63,7 @@ def _main():
     greeting.put()
 
     logging.debug("getting out models")
-    greetings = db.GqlQuery("SELECT * FROM Greeting ORDER BY date DESC LIMIT 10")
+    greetings = gae_adopter.db.GqlQuery("SELECT * FROM Greeting ORDER BY date DESC LIMIT 10")
     for greeting in greetings:
         if greeting.author:
             print greeting.author.nickname()
@@ -66,12 +72,11 @@ def _main():
             print greeting.date
 
     logging.debug("creating a file")
-    from google.appengine.api import files
-    file_name = files.blobstore.create(mime_type='application/octet-stream')
-    with files.open(file_name, 'a') as f:
+    file_name = gae_adopter.files.blobstore.create(mime_type='application/octet-stream')
+    with gae_adopter.files.open(file_name, 'a') as f:
         f.write('data')
-    files.finalize(file_name)
-    blob_key = files.blobstore.get_blob_key(file_name)
+    gae_adopter.files.finalize(file_name)
+    blob_key = gae_adopter.files.blobstore.get_blob_key(file_name)
     return "GaeAdopter._main() finished."
 
 if __name__ == "__main__":
