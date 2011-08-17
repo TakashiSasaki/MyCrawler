@@ -1,9 +1,21 @@
-#Mon Aug 15 02:17:24 JST 2011
+#Thu Aug 18 02:50:20 JST 2011
 DESKTOP_PROJECT_SDK_VERSION=1.2.0.RC3
 eclipse.preferences.version=1
+packages/Linux\ Intel\ 32-bit/app_page=http\://api.appcelerator.net/p/pages/app_page?token\=R4svBs04
+packages/Linux\ Intel\ 32-bit/app_version=0.1.1
+packages/Linux\ Intel\ 32-bit/label=Linux Intel 32-bit
+packages/Linux\ Intel\ 32-bit/platform=linux
+packages/Linux\ Intel\ 32-bit/pubdate=2011-08-03 06\:51\:23
+packages/Linux\ Intel\ 32-bit/url=http\://api.appcelerator.net/p/v1/download?token\=d4sFj4q6
+packages/Linux\ Intel\ 64-bit/app_page=http\://api.appcelerator.net/p/pages/app_page?token\=R4svBs04
+packages/Linux\ Intel\ 64-bit/app_version=0.1.1
+packages/Linux\ Intel\ 64-bit/label=Linux Intel 64-bit
+packages/Linux\ Intel\ 64-bit/platform=linux
+packages/Linux\ Intel\ 64-bit/pubdate=2011-08-03 06\:51\:23
+packages/Linux\ Intel\ 64-bit/url=http\://api.appcelerator.net/p/v1/download?token\=n4sFj4q6
 packages/Windows\ 32-bit/app_page=http\://api.appcelerator.net/p/pages/app_page?token\=R4svBs04
-packages/Windows\ 32-bit/app_version=0.0.8
+packages/Windows\ 32-bit/app_version=0.1.1
 packages/Windows\ 32-bit/label=Windows 32-bit
 packages/Windows\ 32-bit/platform=win32
 packages/Windows\ 32-bit/pubdate=2011-08-03 06\:51\:23
-packages/Windows\ 32-bit/url=http\://api.appcelerator.net/p/v1/download?token\=X4sCsvs5
+packages/Windows\ 32-bit/url=http\://api.appcelerator.net/p/v1/download?token\=D4sFj593

@@ -1,28 +1,49 @@
 <html>
 	<head>
 		<title>Update Obomb</title>
+		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
 		<script type="text/javascript">
 			function onloadHandler() {
-				document.getElementById("mid").innerText=Titanium.Platform.id;
-				document.getElementById("guid").innerText=Titanium.App.getGUID();
-				document.getElementById("version").value = Titanium.App.getVersion();
+				$("#platform_id").text(Titanium.Platform.id);
+				$("#guid").text(Titanium.App.getGUID());
+				$("#current_version").text(Titanium.App.getVersion());
+				$("#application_id").text(Titanium.App.getID());
+
+				window.onclose = function() {
+					alert("abc");
+					Titanium.UpdateManager.cancelMonitor(monitor_id);
+				}
 			}
 
-			function onclickHandler() {
+			var monitor_id = 0;
+			function UpdateMonitorCallback() {
+				//Titanium.UpdateManager.cancelMonitor(monitor_id);
+				$('#update_check').text("checked");
+				Titanium.UpdateManager.onupdate = function(details) {
+					$("#details.name").text(details.name);
+					$("#details.version").text(details.version);
+					var update_now = window.confirm("Update now?");
+					if(update_now) {
+						Titanium.UpdateManager.installAppUpdate(details);
+					}
+				};
+			}
+
+			function onclickAutomaticUpdate() {
+				monitor_id = Titanium.UpdateManager.startMonitor(Titanium.App.getID(), UpdateMonitorCallback(), 1000 * 3600);
+				$('#monitor_id').text(monitor_id);
+				$('#update_check').text("monitoring update");
+			}
+
+			function onclickHandlerSandbox() {
 				var xhr = Titanium.Network.createHTTPClient();
 				xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-				qs = 'version='
-				+Titanium.Network.encodeURIComponent(document.getElementById("version").value)
-				+'&name='
-				+Titanium.Network.encodeURIComponent(document.getElementById("component").value)
-				+'&mid='+Titanium.Network.encodeURIComponent(document.getElementById("mid").innerText)
-				+'&limit=100'
-				+'&guid='+Titanium.Network.encodeURIComponent(document.getElementById("guid").innerText);
+				qs = 'version=' + Titanium.Network.encodeURIComponent(document.getElementById("version").value) + '&name=' + Titanium.Network.encodeURIComponent(document.getElementById("component").value) + '&mid=' + Titanium.Network.encodeURIComponent(document.getElementById("mid").innerText) + '&limit=100' + '&guid=' + Titanium.Network.encodeURIComponent(document.getElementById("guid").innerText);
 				document.getElementById("query_string").innerText = qs;
 				url = Titanium.App.getStreamURL("release-list");
 				document.getElementById("url").innerText = url;
 				xhr.onreadystatechange = function() {
-					if (this.readyState == 4) {
+					if(this.readyState == 4) {
 						document.getElementById("response").innerText = this.responseText;
 					} else {
 						document.getElementById("response").innerText = this.readyState;
@@ -34,40 +55,80 @@
 		</script>
 	</head>
 	<body onload="onloadHandler();">
-		<table>
-			<tr>
-				<td>version</td>
-				<td>
-				<input type="text" size="10" name="version" id="version"/>
-				</td>
-			</tr>
-			<tr>
-				<td>component</td>
-				<td>
-				<input type="text" size="25" name="component" id="component"/>
-				</td>
-			</tr>
-			<tr>
-				<td>mid</td>
-				<td id="mid"></td>
-			</tr>
-			<tr>
-				<td>guid</td>
-				<td id="guid"></td>
-			</tr>
-		</table>
-		<table>
-			<tr>
-				<td>query string</td>
-				<td id="query_string"></td>
-			</tr>
-			<tr>
-				<td>url</td>
-				<td id="url"></td>
-			</tr>
-		</table>
-		<textarea rows="10" cols="60" id="response">
-		</textarea>
-		<input type="button" onclick="onclickHandler();" value="post"/>
+		<section>
+			<h1>Update manually</h1>
+			You can download latest release at <a href="http://api.appcelerator.net/p/pages/app_page?token=R4svBs04">http://api.appcelerator.net/p/pages/app_page?token=R4svBs04</a>.
+		</section>
+		<section>
+			<h1>Update automatically</h1>
+			Update manager is currently not working properly.
+			<input type="button" value="start update monitor" onclick="onclickAutomaticUpdate();"/>
+			<section>
+				<h2>Update manager status</h2>
+				<table border="1px" summary="">
+					<tr>
+						<td>Platform ID</td>
+						<td id="platform_id"></td>
+					</tr>
+					<tr>
+						<td>Application ID</td>
+						<td id="application_id"></td>
+					</tr>
+					<tr>
+						<td>Application GUID</td>
+						<td id="guid"></td>
+					</tr>
+					<tr>
+						<td>Current Version</td>
+						<td id="current_version"></td>
+					</tr>
+					<tr>
+						<td>New name</td>
+						<td id="details.name"></td>
+					</tr>
+					<tr>
+						<td>New version</td>
+						<td id="details.version"></td>
+					</tr>
+					<tr>
+						<td>Update Monitor ID</td>
+						<td id="monitor_id"></td>
+					</tr>
+					<tr>
+						<td>Update Monitor Status</td>
+						<td id="update_check">Not monitord</td>
+					</tr>
+				</table>
+			</section>
+		</section>
+		<section style="visibility:hidden">
+			<h1>Sandbox to play with update server</h1>
+			<table border="1px" summary="">
+				<tr>
+					<td>version</td>
+					<td>
+					<input type="text" size="10" name="version" id="version"/>
+					</td>
+				</tr>
+				<tr>
+					<td>component</td>
+					<td>
+					<input type="text" size="25" name="component" id="component"/>
+					</td>
+				</tr>
+			</table>
+			<table summary="">
+				<tr>
+					<td>query string</td>
+					<td id="query_string"></td>
+				</tr>
+				<tr>
+					<td>url</td>
+					<td id="url"></td>
+				</tr>
+			</table>
+			<textarea rows="10" cols="60" id="response"></textarea>
+			<input type="button" onclick="onclickHandlerSandbox();"/>
+		</section>
 	</body>
 </html>
