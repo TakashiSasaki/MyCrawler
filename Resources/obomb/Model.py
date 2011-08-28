@@ -1,6 +1,6 @@
-from GaeAdopter import GaeAdopter
+from google.appengine.ext import db
 
-class IriModel(GaeAdopter.db.Model):
+class IriModel(db.Model):
     """
       URI         = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
       hier-part   = "//" authority path-abempty / path-absolute / path-rootless / path-empty
@@ -12,10 +12,10 @@ class IriModel(GaeAdopter.db.Model):
        / \ /                        \
        urn:example:animal:ferret:nose
     """
-    originalUrl = GaeAdopter.db.URLProperty()
-    hierPart = GaeAdopter.db.StringListProperty()
-    query = GaeAdopter.db.StringProperty()
-    fragment = GaeAdopter.db.StringProperty()
+    originalUrl = db.URLProperty()
+    hierPart = db.StringListProperty()
+    query = db.StringProperty()
+    fragment = db.StringProperty()
     
     def SetIri(self):
         """sets uri and its components.
@@ -35,16 +35,22 @@ class IriModel(GaeAdopter.db.Model):
     def GetFragment(self):
         return self.fragment
         
-class MetadataCoreModel(GaeAdopter.db.polymodel.PolyModel):
-    owner = GaeAdopter.db.UserProperty()
-    identityUri = GaeAdopter.db.ReferenceProperty(IriModel)
-    metadataIri = GaeAdopter.db.ListProperty(GaeAdopter.db.Key)
-    created = GaeAdopter.db.DateTimeProperty()
-    modified = GaeAdopter.db.DateTimeProperty()
+class MetadataCoreModel(db.polymodel.PolyModel):
+    owner = db.UserProperty()
+    identityUri = db.ReferenceProperty(IriModel)
+    metadataIri = db.ListProperty(db.Key)
+    created = db.DateTimeProperty()
+    modified = db.DateTimeProperty()
 
 class MetadataModel(MetadataCoreModel):
-    tags = GaeAdopter.db.StringListProperty()
-    hash = GaeAdopter.db.StringProperty()
+    tags = db.StringListProperty()
+    hash = db.StringProperty()
+    incomingIdentifier = db.StringProperty()
+    outgoingIdentifier = db.StringProperty()
+    incomingControl = db.BooleanProperty()
+    outgoingControl = db.BooleanProperty()
+    allowedUsers = db.ListProperty(db.UserProperty)
+    
 
 #    def GetScheme(self):
 #        """returns normalized scheme"""
