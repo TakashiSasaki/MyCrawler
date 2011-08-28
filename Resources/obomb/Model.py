@@ -35,6 +35,17 @@ class IriModel(GaeAdopter.db.Model):
     def GetFragment(self):
         return self.fragment
         
+class MetadataCoreModel(GaeAdopter.db.polymodel.PolyModel):
+    owner = GaeAdopter.db.UserProperty()
+    identityUri = GaeAdopter.db.ReferenceProperty(IriModel)
+    metadataIri = GaeAdopter.db.ListProperty(GaeAdopter.db.Key)
+    created = GaeAdopter.db.DateTimeProperty()
+    modified = GaeAdopter.db.DateTimeProperty()
+
+class MetadataModel(MetadataCoreModel):
+    tags = GaeAdopter.db.StringListProperty()
+    hash = GaeAdopter.db.StringProperty()
+
 #    def GetScheme(self):
 #        """returns normalized scheme"""
 #        scheme = self.scheme
@@ -75,14 +86,4 @@ class IriModel(GaeAdopter.db.Model):
 #        Thus zero-length string represents slash itself.
 #        """
 #        return self.segments
-
-        
-
-class UrlPrefixedTag(GaeAdopter.db.Expando):
-    prefixUrl = GaeAdopter.db.URLProperty
-    word = GaeAdopter.db.StringProperty
-    time = GaeAdopter.db.DateTimeProperty
-    
-class MetadataNodeModel(GaeAdopter.db.Model):
-    pass
 
