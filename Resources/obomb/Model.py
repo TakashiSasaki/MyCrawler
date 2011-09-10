@@ -1,4 +1,5 @@
 from google.appengine.ext import db
+from google.appengine.api import users
 
 class IriModel(db.Model):
     """
@@ -12,6 +13,7 @@ class IriModel(db.Model):
        / \ /                        \
        urn:example:animal:ferret:nose
     """
+    #idnumber = db.IntegerProperty()
     originalUrl = db.URLProperty()
     hierPart = db.StringListProperty()
     query = db.StringProperty()
@@ -34,23 +36,93 @@ class IriModel(db.Model):
 
     def GetFragment(self):
         return self.fragment
-        
-class MetadataCoreModel(db.polymodel.PolyModel):
-    owner = db.UserProperty()
-    identityUri = db.ReferenceProperty(IriModel)
-    metadataIri = db.ListProperty(db.Key)
-    created = db.DateTimeProperty()
-    modified = db.DateTimeProperty()
 
-class MetadataModel(MetadataCoreModel):
-    tags = db.StringListProperty()
-    hash = db.StringProperty()
-    incomingIdentifier = db.StringProperty()
-    outgoingIdentifier = db.StringProperty()
-    incomingControl = db.BooleanProperty()
-    outgoingControl = db.BooleanProperty()
-    allowedUsers = db.ListProperty(db.UserProperty)
-    
+class VerseModel(db.polymodel.PolyModel):
+    """Properties in this model never relies on other information
+    except the data that sourceUri points to.
+    SHA512 is the best on 64bit machine for now.
+    """
+    sourceUri = db.ReferenceProperty(IriModel)
+    sha512 = db.ByteStringProperty()
+    retrievedString = db.StringProperty()
+    retrievedBlob = db.BlobProperty()
+    retrievedText = db.TextProperty()
+
+class SyncModel(VerseModel):
+    """This class models hub style data synchronizing system.
+    idNumber is signed integer.
+    zero indicates invalid ID number.
+    negative idNumber indicates local ID number.
+    positive idNumber is assigned by obomb web service and globally unique.
+    """
+    idNumber = db.IntegerProperty()
+    lastUploaded = db.DateTimeProperty()
+    lastDownloaded = db.DateTimeProperty()
+    lastStableDurationBegins = db.DateTimeProperty()
+    lastStableDurationEnds = db.DateTimeProperty()
+        
+class TagNodeModel(VerseModel):
+    #verse = db.Reference(VerseModel)
+    #idnumber = db.IntegerProperty()
+    #identityUri = db.ReferenceProperty(IriModel)
+    controlledBy = db.UserProperty()
+    metadataIris = db.ListProperty(db.Key)
+    #createdDateTime = db.DateTimeProperty()
+    #modifiedDateTime = db.DateTimeProperty()
+
+class DescriptiveMetadataModel(db.Expando):
+    """Descriptive metadata describes resource for purposes such as discovery and identification. 
+    It can include elements such as title, abstract, author, and keywords. (NISO, ISBN 1-880124-62-9)
+    In obomb, this model is indented to hold most generic information.
+    They are self descriptive, independent from environment and media.
+    """
+    idnumber = db.IntegerProperty()
+    title = db.StringProperty()
+    keywords = db.StringListProperty()
+    authors = db.StringListProperty()
+
+class TechnicalMetadataModel(db.Expando): 
+    """Technical metadata focuses on how a digital object was created, its format, 
+    format-specific technical characteristics, storage and location, etc. 
+    Accurate technical metadata helps a repository manage digital 
+    objects over time and keep them usable. 
+    (http://hul.harvard.edu/ois/digproj/metadata-standards.html)
+    """
+    idnumber = db.IntegerProperty()
+    messageDigest = db.StringProperty()
+    size = db.IntegerProperty()
+    owner = db.StringProperty()
+    createdDateTime = db.DateTimeProperty()
+    modifiedDateTime = db.DateTimeProperty()    
+    url = db.URLProperty()
+    geo = db.GeoPtProperty()
+
+class AdministrativeMetadataModel(db.Expando):
+    idnumber = db.IntegerProperty()
+    controlledBy = db.UserProperty()
+    lastSeenDateTime = db.DateTimeProperty()
+    lastSeenBy = db.StringProperty()
+    lastSeenFrom = db.StringProperty()
+    incomingToken = db.StringProperty()
+    outgoingToken = db.StringProperty()
+    allowedUsers = db.ListProperty(users.User)
+
+class StructuralMetadataModel(db.Expando):
+    """Structural metadata indicates how compound objects are pot together,
+    for example, how pages are ordered to form chapters. (NISO ISBN 1-880124-62-9)
+    METS (Metadata Encoding & Transmission Standard) includes structural metadata standard.
+    """
+    idnumber = db.IntegerProperty()
+
+class MetadataSuiteModel(db.Expando):
+    idnumber = db.IntegerProperty()
+    descriptiveMetadata = db.ReferenceProperty(DescriptiveMetadataModel)
+    technicalMetadata = db.ReferenceProperty(TechnicalMetadataModel)
+    administrativeMetadata = db.ReferenceProperty(AdministrativeMetadataModel)
+    structuralMetadata = db.ReferenceProperty(StructuralMetadataModel)
+    knot = db.ReferenceProperty(TagNodeModel)
+    obsoletedBy = db.SelfReference(collection_name="obsoletedBy_set")
+    equivalentTo = db.SelfReference(collection_name="equivalentTo_set")
 
 #    def GetScheme(self):
 #        """returns normalized scheme"""
@@ -92,4 +164,20 @@ class MetadataModel(MetadataCoreModel):
 #        Thus zero-length string represents slash itself.
 #        """
 #        return self.segments
+
+import unittest
+class Test(unittest.TestCase):
+    def setUp(self):
+        descriptive_metadata = DescriptiveMetadataModel()
+        descriptive_metadata.authors = ["Takashi SASAKI", "Nanashi no Gombei"]
+        descriptive_metadata.keywords = ["Sunday", "Monday"]
+        descriptive_metadata.title = "Sunny day"
+        descriptive_metadata.put()
+
+    def tearDown(self):
+        pass
+
+    def testName(self):
+        pass
+
 
