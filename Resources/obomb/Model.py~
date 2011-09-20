@@ -82,8 +82,9 @@ class PivotModel(db.polymodel.PolyModel):
     idNumber = db.IntegerProperty()
     verseItems = db.ListProperty(db.IntegerProperty)
 
-class KnotModel(PivotModel):
-    parentKnot = db.IntegerProperty()   
+class TagNodeModel(PivotModel):
+    idNumber = db.IntegerProperty()
+    parentNode = db.IntegerProperty()   
     #verse = db.Reference(VerseModel)
     #idnumber = db.IntegerProperty()
     #identityUri = db.ReferenceProperty(IriModel)
@@ -98,7 +99,7 @@ class PredicationModel(db.Model):
     node = db.ReferenceProperty(PivotModel)
 
 class MetadataModel(db.Model):
-    metadataId = db.IntegerProperty()
+	metadataId = db.integerProperty()
     predications = db.ListProperty(db.IntegerProperty)
 
 ###############################################################################
@@ -149,15 +150,15 @@ class StructuralMetadataModel(db.Expando):
     """
     idnumber = db.IntegerProperty()
 
-#class MetadataSuiteModel(db.Expando):
-#    idnumber = db.IntegerProperty()
-#    descriptiveMetadata = db.ReferenceProperty(DescriptiveMetadataModel)
-#    technicalMetadata = db.ReferenceProperty(TechnicalMetadataModel)
-#    administrativeMetadata = db.ReferenceProperty(AdministrativeMetadataModel)
-#    structuralMetadata = db.ReferenceProperty(StructuralMetadataModel)
-#    knot = db.ReferenceProperty(TagNodeModel)
-#    obsoletedBy = db.SelfReference(collection_name="obsoletedBy_set")
-#    equivalentTo = db.SelfReference(collection_name="equivalentTo_set")
+class MetadataSuiteModel(db.Expando):
+    idnumber = db.IntegerProperty()
+    descriptiveMetadata = db.ReferenceProperty(DescriptiveMetadataModel)
+    technicalMetadata = db.ReferenceProperty(TechnicalMetadataModel)
+    administrativeMetadata = db.ReferenceProperty(AdministrativeMetadataModel)
+    structuralMetadata = db.ReferenceProperty(StructuralMetadataModel)
+    knot = db.ReferenceProperty(TagNodeModel)
+    obsoletedBy = db.SelfReference(collection_name="obsoletedBy_set")
+    equivalentTo = db.SelfReference(collection_name="equivalentTo_set")
 
 #    def GetScheme(self):
 #        """returns normalized scheme"""
