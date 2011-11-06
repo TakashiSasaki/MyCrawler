@@ -47,15 +47,6 @@ class VerseModel(db.polymodel.PolyModel):
     retrievedBlob = db.BlobProperty()
     retrievedText = db.TextProperty()
 
-class Singleton(type): 
-    def __init__(self, *args): 
-        type.__init__(self, *args) 
-        self._instances = {}
-
-    def __call__(self, *args): 
-        if not args in self._instances: 
-            self._instances[args] = type.__call__(self, *args) 
-            return self._instances[args]
 
 class SyncModel(VerseModel):
     """This class models hub style data synchronizing system.
@@ -67,8 +58,8 @@ class SyncModel(VerseModel):
     """
     idNumber = db.IntegerProperty()
     owner = db.UserProperty()
-    posteriorLockBegins = db.DateTimeProperty()
-    posteriorLockEnds = db.DateTimeProperty()
+    lockBegins = db.DateTimeProperty()
+    lockEnds = db.DateTimeProperty()
     #lastUploaded = db.DateTimeProperty()
     #lastDownloaded = db.DateTimeProperty()
     #lastStableDurationBegins = db.DateTimeProperty()
@@ -84,18 +75,18 @@ class PivotModel(db.polymodel.PolyModel):
 
 class KnotModel(PivotModel):
     parentKnot = db.IntegerProperty()   
+    metadataIris = db.ListProperty(db.Key)
     #verse = db.Reference(VerseModel)
     #idnumber = db.IntegerProperty()
     #identityUri = db.ReferenceProperty(IriModel)
     #controlledBy = db.UserProperty()
-    metadataIris = db.ListProperty(db.Key)
     #createdDateTime = db.DateTimeProperty()
     #modifiedDateTime = db.DateTimeProperty()
 
 class PredicationModel(db.Model):
     predicationId = db.IntegerProperty()
-    arc = db.ReferenceProperty(PivotModel)
-    node = db.ReferenceProperty(PivotModel)
+    arc = db.IntegerProperty()
+    node = db.IntegerProperty()
 
 class MetadataModel(db.Model):
     metadataId = db.IntegerProperty()
