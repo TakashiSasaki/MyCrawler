@@ -60,6 +60,7 @@ class SyncModel(VerseModel):
     owner = db.UserProperty()
     lockBegins = db.DateTimeProperty()
     lockEnds = db.DateTimeProperty()
+    versionNumber = db.IntegerProperty()
     #lastUploaded = db.DateTimeProperty()
     #lastDownloaded = db.DateTimeProperty()
     #lastStableDurationBegins = db.DateTimeProperty()
