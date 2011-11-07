@@ -36,25 +36,13 @@ class IriModel(db.Model):
     def GetFragment(self):
         return self.fragment
 
-class VerseModel(db.polymodel.PolyModel):
-    """Properties in this model never relies on other information
-    except the data that sourceUri points to.
-    SHA512 is the best on 64bit machine for now.
-    """
-    sourceUri = db.ReferenceProperty(IriModel)
-    sha512 = db.ByteStringProperty()
-    retrievedString = db.StringProperty()
-    retrievedBlob = db.BlobProperty()
-    retrievedText = db.TextProperty()
-
-
-class SyncModel(VerseModel):
+class SyncModel(db.polymodel.PolyModel):
     """This class models hub style data synchronizing system.
     idNumber is signed integer.
     zero indicates invalid ID number.
     negative idNumber indicates local ID number.
     positive idNumber is assigned by obomb web service and globally unique.
-	None owner indicates that the instance is well-known and authorized by standards outside.
+    None owner indicates that the instance is well-known and authorized by standards outside.
     """
     idNumber = db.IntegerProperty()
     owner = db.UserProperty()
@@ -65,6 +53,17 @@ class SyncModel(VerseModel):
     #lastDownloaded = db.DateTimeProperty()
     #lastStableDurationBegins = db.DateTimeProperty()
     #lastStableDurationEnds = db.DateTimeProperty()
+
+class VerseModel(SyncModel):
+    """Properties in this model never relies on other information
+    except the data that sourceUri points to.
+    SHA512 is the best on 64bit machine for now.
+    """
+    sourceUri = db.ReferenceProperty(IriModel)
+    sha512 = db.ByteStringProperty()
+    retrievedString = db.StringProperty()
+    retrievedBlob = db.BlobProperty()
+    retrievedText = db.TextProperty()
 
 class PivotModel(db.polymodel.PolyModel):
     """Pivot is a set of verses.
