@@ -1,38 +1,12 @@
 <html>
 	<head>
-		<title>Update Obomb</title>
+		<title>Update for Obomb client</title>
 		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
 		<script type="text/javascript">
+			//This function was invoked when this page is loaded.
 			function onloadHandler() {
-				$("#platform_id").text(Titanium.Platform.id);
-				$("#guid").text(Titanium.App.getGUID());
-				$("#current_version").text(Titanium.App.getVersion());
-				$("#application_id").text(Titanium.App.getID());
-
 				window.onclose = function() {
-					alert("abc");
-					Titanium.UpdateManager.cancelMonitor(monitor_id);
 				}
-			}
-
-			var monitor_id = 0;
-			function UpdateMonitorCallback() {
-				//Titanium.UpdateManager.cancelMonitor(monitor_id);
-				$('#update_check').text("checked");
-				Titanium.UpdateManager.onupdate = function(details) {
-					$("#details.name").text(details.name);
-					$("#details.version").text(details.version);
-					var update_now = window.confirm("Update now?");
-					if(update_now) {
-						Titanium.UpdateManager.installAppUpdate(details);
-					}
-				};
-			}
-
-			function onclickAutomaticUpdate() {
-				monitor_id = Titanium.UpdateManager.startMonitor(Titanium.App.getID(), UpdateMonitorCallback(), 1000 * 3600);
-				$('#monitor_id').text(monitor_id);
-				$('#update_check').text("monitoring update");
 			}
 
 			function onclickHandlerSandbox() {
@@ -54,81 +28,156 @@
 			}
 		</script>
 	</head>
-	<body onload="onloadHandler();">
+	<body onload="onloadHandler()" onunload="Titanium.App.exit()">
 		<section>
-			<h1>Update manually</h1>
-			You can download latest release at <a href="http://api.appcelerator.net/p/pages/app_page?token=R4svBs04">http://api.appcelerator.net/p/pages/app_page?token=R4svBs04</a>.
+			<h1>Current application information</h1>
+			<table border="1px" summary="">
+				<tr>
+					<td>Platform ID</td>
+					<td id="platform_id" ></td>
+				</tr>
+				<tr>
+					<td>Application ID</td>
+					<td id="application_id"></td>
+				</tr>
+				<tr>
+					<td>Application GUID</td>
+					<td id="guid"></td>
+				</tr>
+				<tr>
+					<td>Current Version</td>
+					<td id="current_version"></td>
+				</tr>
+				<tr>
+					<td>Release List</td>
+					<td id="release_list"></td>
+				</tr>
+				<tr>
+					<td>Download page</td>
+					<td><a href="http://api.appcelerator.net/p/pages/app_page?token=R4svBs04">http://api.appcelerator.net/p/pages/app_page?token=R4svBs04</a></td>
+				</tr>
+			</table>
+			<script>
+				$("#platform_id").text(Titanium.Platform.id);
+				$("#guid").text(Titanium.App.getGUID());
+				$("#application_id").text(Titanium.App.getID());
+				$("#current_version").text(Titanium.App.getVersion());
+				$("#release_list").text(Titanium.App.getStreamURL("release-list"));
+
+			</script>
 		</section>
 		<section>
-			<h1>Update automatically</h1>
-			Update manager is currently not working properly.
-			<input type="button" value="start update monitor" onclick="onclickAutomaticUpdate();"/>
-			<section>
-				<h2>Update manager status</h2>
-				<table border="1px" summary="">
-					<tr>
-						<td>Platform ID</td>
-						<td id="platform_id"></td>
-					</tr>
-					<tr>
-						<td>Application ID</td>
-						<td id="application_id"></td>
-					</tr>
-					<tr>
-						<td>Application GUID</td>
-						<td id="guid"></td>
-					</tr>
-					<tr>
-						<td>Current Version</td>
-						<td id="current_version"></td>
-					</tr>
-					<tr>
-						<td>New name</td>
-						<td id="details.name"></td>
-					</tr>
-					<tr>
-						<td>New version</td>
-						<td id="details.version"></td>
-					</tr>
-					<tr>
-						<td>Update Monitor ID</td>
-						<td id="monitor_id"></td>
-					</tr>
-					<tr>
-						<td>Update Monitor Status</td>
-						<td id="update_check">Not monitord</td>
-					</tr>
-				</table>
-			</section>
+			<h1>Status of update monitor</h1>
+			<script>
+				var monitor_id = 0;
+				function OnUpdate(details) {
+					//this function is called when update is found
+					$("#update_found").text("Yes");
+					$("#update_name").text(details.name);
+					$("#update_version").text(details.version);
+					var update_now = window.confirm("Update now?");
+					if(update_now) {
+						Titanium.UpdateManager.installAppUpdate(details);
+					} else {
+
+					}//if
+				}//OnUpdate
+
+				function Callback() {
+					$("#called_back").text("Yes");
+				}
+
+				function StartUpdateMonitor() {
+					$('#monitor_started').text("progress");
+					monitor_id = Titanium.UpdateManager.startMonitor(Titanium.App.getID(), "Callback" , 1000 * 60 * 5);
+					Titanium.UpdateManager.onupdate = OnUpdate;
+					$('#monitor_started').text("Yes");
+					$('#monitor_id').text(monitor_id);
+				}
+			</script>
+			<table border="1px">
+				<tr>
+					<td>Update Monitor ID</td>
+					<td id="monitor_id">
+					<input type="button" value="start update monitor" onclick="StartUpdateMonitor();"/>
+					</td>
+				</tr>
+				<tr>
+					<td>Monitor Started </td>
+					<td id="monitor_started">no</td>
+				</tr>
+				<tr>
+					<td>Called back</td>
+					<td id="called_back">not yet</td>
+				</tr>
+				<tr>
+					<td>Update found?</td>
+					<td id="update_found">no</td>
+				</tr>
+				<tr>
+					<td>New name</td>
+					<td id="update_name">not found</td>
+				</tr>
+				<tr>
+					<td>New version</td>
+					<td id="update_version">not found</td>
+				</tr>
+			</table>
 		</section>
-		<section style="visibility:hidden">
+		<section>
 			<h1>Sandbox to play with update server</h1>
 			<table border="1px" summary="">
 				<tr>
-					<td>version</td>
+					<td>GUID</td>
 					<td>
-					<input type="text" size="10" name="version" id="version"/>
+					<input id="param_guid" type="text" size="30"/>
 					</td>
-				</tr>
-				<tr>
-					<td>component</td>
 					<td>
-					<input type="text" size="25" name="component" id="component"/>
+					<input type="button" onclick="GuessGuid()" value="guess" />
 					</td>
+					<script>
+						function GuessGuid() {
+							var guid = Titanium.App.getGUID();
+							$("#param_guid").text(guid);
+						}
+
+						function AppendGuid() {
+							var a = $("#query_string").text();
+							var b = $("#param_guid").text();
+							var c = a + "&" + Titanium.Network.encodeURIComponent(b);
+							$("#query_string").text(c);
+						}
+					</script>
 				</tr>
 			</table>
-			<table summary="">
-				<tr>
-					<td>query string</td>
-					<td id="query_string"></td>
-				</tr>
-				<tr>
-					<td>url</td>
-					<td id="url"></td>
-				</tr>
-			</table>
-			<textarea rows="10" cols="60" id="response"></textarea>
-			<input type="button" onclick="onclickHandlerSandbox();"/>
+			<textarea id="query_string" rows="10" cols="60" ></textarea>
+			<input type="button" onclick="Post()"/>
+			<input type="button" onclick="ResetQueryString()" value="Reset"/>
+			<script>
+				function ResetQueryString() {
+					$("#query_string").text("");
+				}
+
+				function Post() {
+					var xhr = Titanium.Network.createHTTPClient();
+					xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+					//qs = 'version=' + Titanium.Network.encodeURIComponent(document.getElementById("version").value) + '&name=' + Titanium.Network.encodeURIComponent(document.getElementById("component").value) + '&mid=' + Titanium.Network.encodeURIComponent(document.getElementById("mid").innerText) + '&limit=100' + '&guid=' + Titanium.Network.encodeURIComponent(document.getElementById("guid").innerText);
+					document.getElementById("query_string").innerText = qs;
+					url = Titanium.App.getStreamURL("release-list");
+					document.getElementById("url").innerText = url;
+					xhr.onreadystatechange = function() {
+						if(this.readyState == 4) {
+							document.getElementById("response").innerText = this.responseText;
+						} else {
+							document.getElementById("response").innerText = this.readyState;
+						}
+					}
+					xhr.open("POST", url, true);
+					xhr.send(qs);
+
+				}
+			</script>
+			<textarea id="response" rows="10" cols="60" />
 		</section>
 	</body>
 </html>
