@@ -1,9 +1,9 @@
-"""classes in this module are obsolteted."""
+"""classes in this module are obsoleted."""
 
 from google.appengine.ext import db
 from google.appengine.api import users
 
-
+# just FYI, obsoleted
 class DescriptiveMetadataModel(db.Expando):
     """Descriptive metadata describes resource for purposes such as discovery and identification. 
     It can include elements such as title, abstract, author, and keywords. (NISO, ISBN 1-880124-62-9)

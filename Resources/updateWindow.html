@@ -70,32 +70,33 @@
 			<h1>Status of update monitor</h1>
 			<script>
 				var monitor_id = 0;
-				function OnUpdate(details) {
-					//this function is called when update is found
-					$("#update_found").text("Yes");
-					$("#update_name").text(details.name);
-					$("#update_version").text(details.version);
-					var update_now = window.confirm("Update now?");
-					if(update_now) {
-						Titanium.UpdateManager.installAppUpdate(details);
-					} else {
-
-					}//if
-				}//OnUpdate
-
-				function Callback() {
-					$("#called_back").text("Yes");
-				}
-
 				function StartUpdateMonitor() {
 					$('#monitor_started').text("progress");
-					monitor_id = Titanium.UpdateManager.startMonitor(Titanium.App.getID(), "Callback" , 1000 * 60 * 5);
-					Titanium.UpdateManager.onupdate = OnUpdate;
+					Titanium.UpdateManager.onupdate = function() {
+					};
+					monitor_id = Titanium.UpdateManager.startMonitor(Titanium.App.getID(), function() {
+						Titanium.UpdateManager.installAppUpdate(details);	
+					}, 60 * 60 * 1000);
 					$('#monitor_started').text("Yes");
 					$('#monitor_id').text(monitor_id);
 				}
 			</script>
 			<table border="1px">
+				<tr>
+					<td>update url</td>
+					<td id="update_url"></td>
+					<script>
+						var url = Titanium.App.getStreamURL("release-list");
+						var qs = 'version=';
+						qs += Titanium.Network.encodeURIComponent(Titanium.App.getVersion());
+						qs += '&name=' + Titanium.Network.encodeURIComponent('app-update');
+						qs += '&mid=' + Titanium.Network.encodeURIComponent(Titanium.Platform.id);
+						qs += '&limit=' + 1 + '&guid=';
+						qs += Titanium.Network.encodeURIComponent(Titanium.App.getGUID());
+						qs += '&os=' + Titanium.platform + '&ostype=' + Titanium.Platform.ostype;
+						$('#update_url').text(url + '?' + qs);
+					</script>
+				</tr>
 				<tr>
 					<td>Update Monitor ID</td>
 					<td id="monitor_id">

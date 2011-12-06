@@ -174,16 +174,18 @@ class MetadataModel(SyncModel):
 import unittest
 class Test(unittest.TestCase):
     def setUp(self):
-        metadata = MetadataModel()
-        metadata.authors = ["Takashi SASAKI", "Nanashi no Gombei"]
-        metadata.keywords = ["Sunday", "Monday"]
-        metadata.title = "Sunny day"
-        metadata.put()
+        iri_model = IriModel()
+        iri_model.originalUrl="http://example.com/test"
+        iri_model.hierPart = [""]
+        iri_model.query = ""
+        iri_model.fragment = ""
+        iri_model.put()
 
     def tearDown(self):
         pass
 
-    def testName(self):
+    def test_dummy(self):
+        return True
         pass
 
 
