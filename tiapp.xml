@@ -5,7 +5,7 @@
     <!-- These values are edited/maintained by Titanium Developer -->
     <id>cx.windy.obomb</id>
     <name>obomb</name>
-    <version>0.2.4</version>
+    <version>0.2.3</version>
     <publisher>Takashi SASAKI</publisher>
     <url>http://twitter.com/TakashiSasaki</url>
     <description>Object oriented metadatabase</description>

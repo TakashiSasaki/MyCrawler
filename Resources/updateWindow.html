@@ -69,13 +69,15 @@
 		<section>
 			<h1>Status of update monitor</h1>
 			<script>
+				//UpdateManager is defined in C:\Users\sasaki\AppData\Roaming\Titanium\modules\win32\tinetwork\1.2.0.RC6e
 				var monitor_id = 0;
 				function StartUpdateMonitor() {
 					$('#monitor_started').text("progress");
-					Titanium.UpdateManager.onupdate = function() {
-					};
+					// If onupdate is not function, default update dialog is shown.
+					//Titanium.UpdateManager.onupdate = function() {
+					//};
 					monitor_id = Titanium.UpdateManager.startMonitor(Titanium.App.getID(), function() {
-						Titanium.UpdateManager.installAppUpdate(details);	
+						Titanium.UpdateManager.installAppUpdate(details);
 					}, 60 * 60 * 1000);
 					$('#monitor_started').text("Yes");
 					$('#monitor_id').text(monitor_id);
@@ -86,15 +88,47 @@
 					<td>update url</td>
 					<td id="update_url"></td>
 					<script>
-						var url = Titanium.App.getStreamURL("release-list");
-						var qs = 'version=';
-						qs += Titanium.Network.encodeURIComponent(Titanium.App.getVersion());
-						qs += '&name=' + Titanium.Network.encodeURIComponent('app-update');
-						qs += '&mid=' + Titanium.Network.encodeURIComponent(Titanium.Platform.id);
-						qs += '&limit=' + 1 + '&guid=';
-						qs += Titanium.Network.encodeURIComponent(Titanium.App.getGUID());
-						qs += '&os=' + Titanium.platform + '&ostype=' + Titanium.Platform.ostype;
-						$('#update_url').text(url + '?' + qs);
+						function GetUpdateQuery() {
+							var qs = 'version=';
+							qs += Titanium.Network.encodeURIComponent(Titanium.App.getVersion());
+							qs += '&name=' + Titanium.Network.encodeURIComponent('app-update');
+							qs += '&mid=' + Titanium.Network.encodeURIComponent(Titanium.Platform.id);
+							qs += '&limit=' + 1 + '&guid=';
+							qs += Titanium.Network.encodeURIComponent(Titanium.App.getGUID());
+							qs += '&os=' + Titanium.platform + '&ostype=' + Titanium.Platform.ostype;
+							return qs;
+						}//GetUpdateQuery
+
+						function GetUpdateUrl() {
+							var url = Titanium.App.getStreamURL("release-list");
+							return url + "?" + GetUpdateQuery();
+						}//GetUpdateUrl
+
+
+						$('#update_url').text(GetUpdateUrl());
+
+					</script>
+				</tr>
+				<tr>
+					<td>response</td>
+					<td id="response"></td>
+					<script>
+						function PostUpdateQuery() {
+							var xhr = Titanium.Network.createHTTPClient();
+							xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+							xhr.onreadystatechange = function() {
+								if(this.readyState == 4) {
+									$("#response").text(this.responseText);
+								} else {
+									$("#response").text(this.readyState);
+								}
+							}
+							xhr.open("POST", Titanium.App.getStreamURL("release-list"), true);
+							xhr.send(GetUpdateQuery());
+						}//PostUpdateQuery
+
+						PostUpdateQuery();
+
 					</script>
 				</tr>
 				<tr>
@@ -115,70 +149,7 @@
 					<td>Update found?</td>
 					<td id="update_found">no</td>
 				</tr>
-				<tr>
-					<td>New name</td>
-					<td id="update_name">not found</td>
-				</tr>
-				<tr>
-					<td>New version</td>
-					<td id="update_version">not found</td>
-				</tr>
 			</table>
-		</section>
-		<section>
-			<h1>Sandbox to play with update server</h1>
-			<table border="1px" summary="">
-				<tr>
-					<td>GUID</td>
-					<td>
-					<input id="param_guid" type="text" size="30"/>
-					</td>
-					<td>
-					<input type="button" onclick="GuessGuid()" value="guess" />
-					</td>
-					<script>
-						function GuessGuid() {
-							var guid = Titanium.App.getGUID();
-							$("#param_guid").text(guid);
-						}
-
-						function AppendGuid() {
-							var a = $("#query_string").text();
-							var b = $("#param_guid").text();
-							var c = a + "&" + Titanium.Network.encodeURIComponent(b);
-							$("#query_string").text(c);
-						}
-					</script>
-				</tr>
-			</table>
-			<textarea id="query_string" rows="10" cols="60" ></textarea>
-			<input type="button" onclick="Post()"/>
-			<input type="button" onclick="ResetQueryString()" value="Reset"/>
-			<script>
-				function ResetQueryString() {
-					$("#query_string").text("");
-				}
-
-				function Post() {
-					var xhr = Titanium.Network.createHTTPClient();
-					xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-					//qs = 'version=' + Titanium.Network.encodeURIComponent(document.getElementById("version").value) + '&name=' + Titanium.Network.encodeURIComponent(document.getElementById("component").value) + '&mid=' + Titanium.Network.encodeURIComponent(document.getElementById("mid").innerText) + '&limit=100' + '&guid=' + Titanium.Network.encodeURIComponent(document.getElementById("guid").innerText);
-					document.getElementById("query_string").innerText = qs;
-					url = Titanium.App.getStreamURL("release-list");
-					document.getElementById("url").innerText = url;
-					xhr.onreadystatechange = function() {
-						if(this.readyState == 4) {
-							document.getElementById("response").innerText = this.responseText;
-						} else {
-							document.getElementById("response").innerText = this.readyState;
-						}
-					}
-					xhr.open("POST", url, true);
-					xhr.send(qs);
-
-				}
-			</script>
-			<textarea id="response" rows="10" cols="60" />
 		</section>
 	</body>
 </html>
