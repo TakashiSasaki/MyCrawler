@@ -19,14 +19,29 @@
 			</input>
 			<input type="text" size="100" disabled="true" id="decoded_root_directory">
 			</input>
+			<input type="button" onclick="OpenFileCrawlerWindow();" value="open file crawler"/>
+			<script type="text/javascript">
+				var file_crawler_window = null;
+				function OpenFileCrawlerWindow() {
+					if(file_crawler_window == null || !file_crawler_window.isActive()) {
+						file_crawler_window = Titanium.UI.createWindow({
+							id : "FileCrawlerWindow",
+							url : "app://FileCrawlerWindow.html"
+						});
+						file_crawler_window.open();
+					} else {
+						file_crawler_window.focus();
+					}
+				}
+			</script>
 			<input type="button" onclick="OpenStatusWindow();" value="open status window"/>
 			<script>
 				var statusWindow = null;
 				function OpenStatusWindow() {
 					if(statusWindow == null || !statusWindow.isActive()) {
 						statusWindow = Titanium.UI.createWindow({
-							id : "statusWindow",
-							url : "app://statusWindow.html"
+							id : "UtatusWindow",
+							url : "app://tatusWindow.html"
 						});
 						statusWindow.open();
 					} else {
@@ -36,16 +51,16 @@
 			</script>
 			<input type="button" onclick="OpenUpdateWindow();" value="open update window"/>
 			<script>
-				var updateWindow = null;
+				var update_window = null;
 				function OpenUpdateWindow() {
-					if(updateWindow == null || !updateWindow.isActive()) {
-						updateWindow = Titanium.UI.createWindow({
-							id : "updateWindow",
-							url : "app://updateWindow.html"
+					if(update_window == null || !update_window.isActive()) {
+						update_window = Titanium.UI.createWindow({
+							id : "UpdateWindow",
+							url : "app://UpdateWindow.html"
 						});
-						updateWindow.open();
+						update_window.open();
 					} else {
-						updateWindow.focus();
+						update_window.focus();
 					}
 				}
 			</script>
