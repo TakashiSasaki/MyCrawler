@@ -2,33 +2,8 @@
 	<head>
 		<title>Update for Obomb client</title>
 		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
-		<script type="text/javascript">
-			//This function was invoked when this page is loaded.
-			function onloadHandler() {
-				window.onclose = function() {
-				}
-			}
-
-			function onclickHandlerSandbox() {
-				var xhr = Titanium.Network.createHTTPClient();
-				xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-				qs = 'version=' + Titanium.Network.encodeURIComponent(document.getElementById("version").value) + '&name=' + Titanium.Network.encodeURIComponent(document.getElementById("component").value) + '&mid=' + Titanium.Network.encodeURIComponent(document.getElementById("mid").innerText) + '&limit=100' + '&guid=' + Titanium.Network.encodeURIComponent(document.getElementById("guid").innerText);
-				document.getElementById("query_string").innerText = qs;
-				url = Titanium.App.getStreamURL("release-list");
-				document.getElementById("url").innerText = url;
-				xhr.onreadystatechange = function() {
-					if(this.readyState == 4) {
-						document.getElementById("response").innerText = this.responseText;
-					} else {
-						document.getElementById("response").innerText = this.readyState;
-					}
-				}
-				xhr.open("POST", url, true);
-				xhr.send(qs);
-			}
-		</script>
 	</head>
-	<body onload="onloadHandler()" onunload="Titanium.App.exit()">
+	<body onload="onloadHandler()">
 		<section>
 			<h1>Current application information</h1>
 			<table border="1px" summary="">
@@ -151,5 +126,6 @@
 				</tr>
 			</table>
 		</section>
+		<input type="button" value="exit application" onclick="Titanium.App.exit();"/>
 	</body>
 </html>

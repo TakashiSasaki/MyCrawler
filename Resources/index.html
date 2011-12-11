@@ -2,33 +2,6 @@
 	<head>
 		<title>OBOMB - Object Oriented Metadatabase</title>
 		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
-		<script type="text/javascript">
-			var statusWindow = null;
-			function OpenStatusWindow() {
-				if(statusWindow == null || !statusWindow.isActive()) {
-					statusWindow = Titanium.UI.createWindow({
-						id : "statusWindow",
-						url : "app://statusWindow.html"
-					});
-					statusWindow.open();
-				} else {
-					statusWindow.focus();
-				}
-			}
-
-			var updateWindow = null;
-			function OpenUpdateWindow() {
-				if(updateWindow == null || !updateWindow.isActive()) {
-					updateWindow = Titanium.UI.createWindow({
-						id : "updateWindow",
-						url : "app://updateWindow.html"
-					});
-					updateWindow.open();
-				} else {
-					updateWindow.focus();
-				}
-			}
-		</script>
 	</head>
 	<body>
 		<section>
@@ -40,11 +13,42 @@
 					$("#decoded_root_directory").text(dig_index.GetDecodedRootDirectory());
 				}
 			</script>
-			<input type="text" size="100" id="root_directory"/>
-			<input type="button" value="Make Index Page" onclick="onclickMakeIndexPage();"/>
-			<input type="text" size="100" disabled="true" id="decoded_root_directory"/>
+			<input type="text" size="100" id="root_directory">
+			</input>
+			<input type="button" value="Make Index Page" onclick="onclickMakeIndexPage();">
+			</input>
+			<input type="text" size="100" disabled="true" id="decoded_root_directory">
+			</input>
+			<input type="button" onclick="OpenStatusWindow();" value="open status window"/>
+			<script>
+				var statusWindow = null;
+				function OpenStatusWindow() {
+					if(statusWindow == null || !statusWindow.isActive()) {
+						statusWindow = Titanium.UI.createWindow({
+							id : "statusWindow",
+							url : "app://statusWindow.html"
+						});
+						statusWindow.open();
+					} else {
+						statusWindow.focus();
+					}
+				}
+			</script>
+			<input type="button" onclick="OpenUpdateWindow();" value="open update window"/>
+			<script>
+				var updateWindow = null;
+				function OpenUpdateWindow() {
+					if(updateWindow == null || !updateWindow.isActive()) {
+						updateWindow = Titanium.UI.createWindow({
+							id : "updateWindow",
+							url : "app://updateWindow.html"
+						});
+						updateWindow.open();
+					} else {
+						updateWindow.focus();
+					}
+				}
+			</script>
 		</section>
-		<input type="button" onclick="OpenStatusWindow();" value="open status window"/>
-		<input type="button" onclick="OpenUpdateWindow();" value="open update window"/>
 	</body>
 </html>
