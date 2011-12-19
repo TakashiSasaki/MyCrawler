@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ti:app xmlns:ti="http://ti.appcelerator.org">
-    <sdk-version>1.2.0.RC6e</sdk-version>
+    <sdk-version>1.1.0</sdk-version>
     <guid>384dd6ef-1acb-4ab1-a1c8-06bc8c997466</guid>
     <!-- These values are edited/maintained by Titanium Developer -->
     <id>cx.windy.obomb</id>
     <name>obomb</name>
-    <version>0.2.3</version>
+    <version>0.2.5</version>
     <publisher>Takashi SASAKI</publisher>
     <url>http://twitter.com/TakashiSasaki</url>
     <description>Object oriented metadatabase</description>

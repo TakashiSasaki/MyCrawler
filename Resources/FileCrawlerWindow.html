@@ -1,18 +1,17 @@
 <html>
 	<head>
-		<title>Crawling over filesystem</title>
-	</head>
-	<body>
-		<script>
-			function OnKeyDownHandler(event){
-				 alert(event.keyCode);
+		<title>window event test</title>
+		<script type="text/javascript">
+			function OnKeyDownHandler() {
+				alert(window.event);
 			}
 		</script>
+	</head>
+	<body>
 		<section>
-			<input type="text" id="path" onkeypress="OnKeyDownHandler();"></input>
+			hit any key
+			<input type="text" id="path" onkeydown="OnKeyDownHandler()"/>
 		</section>
-		<section id="result">
-			
-		</section>
+		<script type="text/python"></script>
 	</body>
 </html>
