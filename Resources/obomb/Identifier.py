@@ -1,7 +1,13 @@
 import uuid, base64, logging,re
+from google.appengine.ext import db
+
+class Model(db.Model):
+    uuid = db.StringProperty()
 
 _b64re = re.compile("([0-9A-Za-z+]+)==$")
 _b32re = re.compile("([0-9A-Z]+)======$")
+
+
 
 def GetBase32UuidWithPadding():
     u = uuid.uuid1()
