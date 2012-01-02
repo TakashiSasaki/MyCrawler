@@ -2,48 +2,140 @@ import io
 import hashlib
 import base64
 from google.appengine.ext import db
+import operator
 
 class DigestModel(db.Model):
     hashMethod = db.StringProperty()
     hashBase32 = db.StringProperty()
     size = db.IntegerProperty()
 
-class Digest(object):
-    __slots__ = ["hashMethod", "hashHex", "hashBase32", "hashBase64", "size", "model"]
+class ReadBufferDigest(object):
+    __slots__ = [ "sha1", "sha256", "md5", "histogram", "givenStartOffset", "givenEndOffset", "startOffset", "endOffset", "bufferedReader"]
     
-    def __init__(self):
-        pass
-    
-    def OpenFile(self, file_name):
-        buffered_reader = io.open(file_name, "rb")
+    def __init__(self, buffered_reader, given_start_offset=0, given_end_offset= -1):
         assert isinstance(buffered_reader, io.BufferedReader)
-        self.size = 0
-        self.hashMethod = "sha256"
-        sha256 = hashlib.sha256()
-        while True:
-            r = buffered_reader.read()
-            sha256.update(r)
-            l = len(r)
-            if l == 0: break
-            self.size += l
-        self.hashBase32 = base64.b32encode(sha256.digest())
-        self.hashBase64 = base64.b64encode(sha256.digest())
-        self.hashHex = sha256.hexdigest()
-        
-    def Uri(self):
-        return "URN:" + self.hashMethod.upper() + ":" + self.hashBase32
-        #return "urn:" + self.hashMethod + ":" + self.hashBase64
-        
-    def Get(self):
-        pass
+        self.sha1 = hashlib.sha1()
+        self.sha256 = hashlib.sha256()
+        self.md5 = hashlib.md5()
+        self.bufferedReader = buffered_reader
+        self.histogram = [0] * 256
+        self.givenStartOffset = given_start_offset
+        self.givenEndOffset = given_end_offset
+        self.startOffset = 0
+        self.endOffset = -1
+        self.done = False
     
-    def Put(self):
-        pass
+    def SkipToGivenStartOffset(self):
+        remaining_to_skip = self.givenStartOffset
+        while remaining_to_skip > 0:
+            dummy = self.bufferedReader.read(remaining_to_skip)
+            remaining_to_skip -= len(dummy)
+            self.startOffset += len(dummy)
+    
+    def ReadToGivenEndOffset(self):
+        current_position = self.startOffset
+        while True:
+            if self.givenEndOffset == -1:
+                r = self.bufferedReader.read()
+            elif current_position <= self.givenEndOffset:
+                r = self.bufferedReader.read(self.givenEndOffset - current_position + 1)
+            else:
+                break
+                #raise RuntimeError("current_position=" + str(current_position) + " givenEndOffset=" + str(self.givenEndOffset))
+            if len(r) == 0: break
+            current_position += len(r)
+            self.endOffset = current_position - 1
+            self.sha256.update(r)
+            self.sha1.update(r)
+            self.md5.update(r)
+            for b in r:
+                self.histogram[ord(b)] += 1
+        assert reduce(operator.add, self.histogram) == (current_position - self.startOffset)
+    
+    def StartOffset(self):
+        assert self.endOffset >= 0
+        return self.startOffset
+    
+    def EndOffset(self):
+        assert self.endOffset >= 0
+        return self.endOffset
+    
+    def TotalLength(self):
+        assert self.endOffset >= 0
+        if (self.givenEndOffset == -1) and (self.endOffset >= 0) :
+            return self.endOffset
+        else:
+            raise RuntimeError("Total length is unknown.")
+        
+    def UrlSuffix(self):
+        assert self.endOffset >= 0
+        suffix = "/" + str(self.startOffset) + "-" + str(self.endOffset)
+        if self.givenEndOffset == -1:
+            suffix += "/" + str(self.endOffset + 1)
+        return suffix
+
+    def Md5Hex(self):
+        assert self.endOffset >= 0
+        return self.md5.hexdigest()
+    
+    def Md5Bytes(self):
+        assert self.endOffset >= 0
+        return self.md5.digest()
+
+    def Md5Base32(self):
+        assert self.endOffset >= 0
+        return base64.b32encode(self.Md5Bytes())
+    
+    def Md5Uri(self, suffix=True):
+        assert self.endOffset >= 0
+        return "URN:MD5:" + self.Md5Base32() + self.UrlSuffix() if suffix else None
+
+    def Sha1Hex(self):
+        assert self.endOffset >= 0
+        return self.sha1.hexdigest()
+    
+    def Sha1Bytes(self):
+        assert self.endOffset >= 0
+        return self.sha1.digest()
+    
+    def Sha1Base32(self):
+        assert self.endOffset >= 0
+        return base64.b32encode(self.Sha1Bytes())
+    
+    def Sha1Uri(self, suffix=True):
+        """recommended because no padding"""
+        assert self.endOffset >= 0
+        return "URN:SHA1:" + self.Sha1Base32() + self.UrlSuffix() if suffix else None
+    
+    def Sha256Hex(self):
+        assert self.endOffset >= 0
+        return self.sha256.hexdigest()
+    
+    def Sha256Bytes(self):
+        assert self.endOffset >= 0
+        return self.sha256.digest()
+    
+    def Sha256Base32(self):
+        assert self.endOffset >= 0
+        return base64.b32encode(self.Sha256Bytes())
+    
+    def Sha256Uri(self, suffix=True):
+        assert self.endOffset >= 0
+        return "URN:SHA256:" + self.Sha256Base32() + self.UrlSuffix() if suffix else None
+    
+class FileDigest(ReadBufferDigest):
+    def __init__(self, file_name, given_start_offset=0, given_end_offset= -1):
+        buffered_reader = io.open(file_name, "rb")
+        ReadBufferDigest.__init__(self, buffered_reader, given_start_offset, given_end_offset)
+        self.SkipToGivenStartOffset()
+        self.ReadToGivenEndOffset()
 
 import unittest
 class Test(unittest.TestCase):
     def setUp(self):
-        unittest.TestCase.tearDown(self)
+        self.digest1 = FileDigest("Digest.py")
+        self.digest2 = FileDigest("Digest.py", 1)
+        self.digest3 = FileDigest("Digest.py", 1, 1)
     
     def testFileIO(self):
         a = io.FileIO("Digest.py")
@@ -56,12 +148,21 @@ class Test(unittest.TestCase):
         assert isinstance(a, file)
 
     def testDigest(self):
-        self.digest = Digest()
-        self.digest.OpenFile("Digest.py")
-        assert self.digest.size > 0
-        assert len(self.digest.hashHex) == 64
-        assert len(self.digest.hashBase32) == 56
-        print  self.digest.GetUri()
+        assert self.digest1.TotalLength() > 0
+        assert len(self.digest1.Sha256Hex()) == 64
+        assert len(self.digest1.Sha256Base32()) == 56
+        print self.digest1.Sha256Uri()
+        print self.digest1.Sha1Uri()
+        print self.digest1.Md5Uri()
+    
+    def testStartOffset(self):
+        assert self.digest2.TotalLength() > 0
+        self.assertEqual(len(self.digest2.Sha1Base32()), 32)
+        print self.digest2.Sha1Uri(True)
+    
+    def testEndOffset(self):
+        self.assertRaises(RuntimeError, self.digest3.TotalLength)
+        print self.digest3.Sha1Uri(True)
 
     def tearDown(self):
         unittest.TestCase.tearDown(self)
