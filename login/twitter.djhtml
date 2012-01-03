@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<link  rel="stylesheet" type="text/css" href="/css/header.css"/>
+		<link  rel="stylesheet" type="text/css" href="/css/footer.css"/>
+		<title>Login to Obomb Web with Google Acount</title>
+		<script type="text/javascript">
+			fragment = location.hash;
+			query = location.search;
+			regex = RegExp("^#(.+)$");
+			fragment.match(regex);
+			fragment2 = RegExp.$1;
+			//alert(fragment2);
+			//alert(query.length);
+			//alert(location.protocol);
+			//alert(location.host);
+			if(fragment2.length > 0 && query.length == 0 && location.protocol == "https:") {
+				redirect_url = location.pathname + "?" + fragment2;
+				//alert(redirect_url);
+				location.href = redirect_url;
+			}
+		</script>
+	</head>
+	<body>
+		<header>
+			{% include "header.djhtml" %}
+		</header>
+		<h1>Login to Obomb Web with Twitter Acount</h1>
+		<p>
+			access_token = {{access_token}}
+		</p>
+		<footer>
+			{% include "footer.djhtml" %}
+		</footer>
+	</body>
+</html>
