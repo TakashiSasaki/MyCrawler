@@ -4,5 +4,15 @@ runtime: python
 api_version: 1
 
 handlers:
+- url: /login/google
+  script: login/google.py
+- url: /login/mixi
+  script: login/mixi.py
+- url: /login/twitter
+  script: login/twitter.py
+- url: /login/yahoojapan
+  script: login/yahoojapan.py
 - url: /.*
   script: asklogin.py
+- url: /html
+  static_dir: html
