@@ -12,6 +12,8 @@ handlers:
   script: login/twitter.py
 - url: /login/yahoojapan
   script: login/yahoojapan.py
+- url: /logout
+  script: logout.py
 - url: /.*
   script: asklogin.py
 - url: /html
