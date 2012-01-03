@@ -54,7 +54,7 @@ class LoginGoogle(webapp.RequestHandler):
             'google_user_identifier': google_user_identifier,
             'number_of_obomb_user_entities': number_of_obomb_user_entities
             }
-        path = os.path.join(os.path.dirname(__file__), 'google.html')
+        path = os.path.join(os.path.dirname(__file__), 'google.djhtml')
         self.response.out.write(template.render(path, template_values))
     
     def post(self):

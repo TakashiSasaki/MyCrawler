@@ -7,7 +7,7 @@
 	</head>
 	<body>
 		<header>
-			{% include "header.html" %}
+			{% include "header.djhtml" %}
 		</header>
 		<h1>Login to Obomb Web with Google Acount</h1>
 		<p>
@@ -53,7 +53,7 @@
 			</tr>
 		</table><a href="/logout">Log out from Obomb Web</a>
 		<footer>
-			{% include "footer.html" %}
+			{% include "footer.djhtml" %}
 		</footer>
 	</body>
 </html>
