@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<link  rel="stylesheet" type="text/css" href="/css/common.css"/>
+		<title>Session was cleared</title>
+	</head>
+	<body>
+		<h1>Your session on Obomb Web was cleared</h1>
+		<p>
+			Your session was cleared.
+			If you continue to use Obomb Web, please visit login again.
+		</p>
+	</body>
+</html>
