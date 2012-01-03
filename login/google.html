@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Login to Obomb Web with Google Acount</title>
+	</head>
+	<body>
+		<h1>Login to Obomb Web with Google Acount</h1>
+		<p>
+			{% if  google_user_identifier %}
+			You are currently logged into Obomb Web with Google Account
+			identified as {{ google_user_nickname }}.
+			You can <a href="{{google_logout_url}}">logout</a> of it.
+			{% else %}
+			You are currently not logged into Obomb Web with Google Account.
+			If you have Google Account, you can <a href="{{google_login_url}}">login<a></a> with it.
+			If not, create it first or use another account.
+			{% endif %}
+		</p>
+		<p>
+			You are currently using the following accounts.
+		</p>
+		<table border="1px">
+			<tr>
+				<td>Google</td><td>{% if logged_in_with_google %}Yes{% else %}No{% endif %}</td>
+				<td><a href="/login_google">Login</a></td>
+			</tr>
+			<tr>
+				<td>Twitter</td><td>{% if logged_in_with_twitter %}Yes{% else %}No{% endif %}</td>
+				<td><a href="/login_twitter">Login</a></td>
+			</tr>
+			<tr>
+				<td>Yahoo Japan</td><td>{% if logged_in_with_yahoojapan %}Yes{% else %}No{% endif %}</td>
+				<td><a href="/login_yahoojapan">Login</a></td>
+			</tr>
+			<tr>
+				<td>mixi</td><td>{% if logged_in_with_yahoojapan %}Yes{% else %}No{% endif %}</td>
+				<td><a href="/login_mixi">Login</a></td>
+			</tr>
+		</table><a href="/logout">Log out from Obomb Web</a>
+		<p>
+			{% if session_id %}
+			Your session ID is {{ session_id }}.
+			{% else %}
+			You may visit this page accidentally. Visit the top page of Obomb Web to start over.
+			{% endif %}
+		</p>
+	</body>
+</html>
