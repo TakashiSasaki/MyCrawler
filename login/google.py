@@ -32,12 +32,15 @@ class LoginGoogle(webapp.RequestHandler):
             google_user_nickname = current_user.nickname()
             google_user_email = current_user.email()
             obomb_user_kind_gql = ObombUserKind.gql("WHERE googleUserIdentifier = :1", [current_user.user_id()])
-            obomb_user_entity = obomb_user_kind_gql.get()
-            if obomb_user_entity is None:
+            obomb_user_entities = obomb_user_kind_gql.fetch()
+            number_of_obomb_user_entities = len(obomb_user_entities) 
+            if number_of_obomb_user_entities == 0:
                 obomb_user_entity = ObombUserKind()
                 obomb_user_entity.googleUserIdentifier = current_user.user_id()
                 obomb_user_entity.put()
+                obomb_user_entities = [obomb_user_entity]
         else:
+            number_of_obomb_user_entities = 0
             google_user_identifier = None
             google_user_nickname = None
             google_user_email = None
@@ -48,7 +51,8 @@ class LoginGoogle(webapp.RequestHandler):
             'google_logout_url' : users.create_logout_url("/login/google"),
             'google_user_nickname' : google_user_nickname,
             'google_user_email' : google_user_email,
-            'google_user_identifier': google_user_identifier
+            'google_user_identifier': google_user_identifier,
+            'number_of_obomb_user_entities': number_of_obomb_user_entities
             }
         path = os.path.join(os.path.dirname(__file__), 'google.html')
         self.response.out.write(template.render(path, template_values))

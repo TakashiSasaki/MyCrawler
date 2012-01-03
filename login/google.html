@@ -22,6 +22,16 @@
 			{% endif %}
 		</p>
 		<p>
+			{% if number_of_obomb_user_entities > 1 %}
+			You have {{number_of_obomb_user_entities}} user entities on Obomb Web.
+			It is not an error and this situation is
+			caused because you may login with different account
+			on different browsers or different PCs.
+			We provide the way to merge and integrate them in the future.
+			Thank you for your patience.
+			{% endif %}
+		</p>
+		<p>
 			You are currently using the following accounts.
 		</p>
 		<table border="1px">
