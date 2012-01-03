@@ -7,14 +7,14 @@ from google.appengine.ext.webapp import template
 from google.appengine.api import users
 from models.ObombUserKind import ObombUserKind
 
-class LogoutRequestHandler(webapp.RequestHandler):
+class ClearRequestHandler(webapp.RequestHandler):
     def get(self):
         current_session = get_current_session()
         template_values = {
             'session_id' : current_session.get(SessionKind.SESSION_ID_KEY),
             }
         current_session.clear()
-        path = os.path.join(os.path.dirname(__file__), 'logout.html')
+        path = os.path.join(os.path.dirname(__file__), 'clear.djhtml')
         self.response.out.write(template.render(path, template_values))
     
     def post(self):
@@ -22,6 +22,6 @@ class LogoutRequestHandler(webapp.RequestHandler):
 
 if __name__ == "__main__":
     application = webapp.WSGIApplication(
-                                     [('/logout', LogoutRequestHandler)],
+                                     [('/clear', ClearRequestHandler)],
                                      debug=True)
     run_wsgi_app(application)
