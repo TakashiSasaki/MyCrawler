@@ -17,7 +17,7 @@
 			You can <a href="{{google_logout_url}}">logout</a> of it.
 			{% else %}
 			You are currently not logged into Obomb Web with Google Account.
-			If you have Google Account, you can <a href="{{google_login_url}}">login<a></a> with it.
+			If you have Google Account, you can <a href="{{google_login_url}}">login</a> with it.
 			If not, create it first or use another account.
 			{% endif %}
 		</p>
