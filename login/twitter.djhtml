@@ -27,7 +27,7 @@
 		</header>
 		<h1>Login to Obomb Web with Twitter Acount</h1>
 		<p>
-			access_token = {{access_token}}
+			{% debug %}
 		</p>
 		<footer>
 			{% include "footer.djhtml" %}
