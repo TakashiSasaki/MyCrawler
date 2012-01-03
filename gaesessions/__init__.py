@@ -481,7 +481,7 @@ class DjangoSessionMiddleware(object):
     """
     def __init__(self):
         fake_app = lambda environ, start_response: start_response
-        self.wrapped_wsgi_middleware = SessionMiddleware(fake_app, cookie_key='obomb_web_gae_sessions')
+        self.wrapped_wsgi_middleware = SessionMiddleware(fake_app, cookie_key='obomb_web_gae_sessions_701610578758170914301948743081894729218947819658791740817508147917801569817746719857916579246797157016951')
         self.response_handler = None
 
     def process_request(self, request):
