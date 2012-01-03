@@ -13,7 +13,7 @@
 		<p>
 			{% if  google_user_identifier %}
 			You are currently logged into Obomb Web with Google Account
-			identified as {{ google_user_nickname }}.
+			identified as {{ google_user_email }}.
 			You can <a href="{{google_logout_url}}">logout</a> of it.
 			{% else %}
 			You are currently not logged into Obomb Web with Google Account.

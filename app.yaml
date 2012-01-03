@@ -6,10 +6,12 @@ api_version: 1
 handlers:
 - url: /login/google
   script: login/google.py
+  secure: always
 - url: /login/mixi
   script: login/mixi.py
 - url: /login/twitter
   script: login/twitter.py
+  secure: always
 - url: /login/yahoojapan
   script: login/yahoojapan.py
 - url: /logout

@@ -32,7 +32,7 @@ class LoginGoogle(webapp.RequestHandler):
             google_user_nickname = current_user.nickname()
             google_user_email = current_user.email()
             obomb_user_kind_gql = ObombUserKind.gql("WHERE googleUserIdentifier = :1", [current_user.user_id()])
-            obomb_user_entities = obomb_user_kind_gql.fetch()
+            obomb_user_entities = obomb_user_kind_gql.fetch(1000)
             number_of_obomb_user_entities = len(obomb_user_entities) 
             if number_of_obomb_user_entities == 0:
                 obomb_user_entity = ObombUserKind()
