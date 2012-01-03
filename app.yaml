@@ -14,7 +14,9 @@ handlers:
   script: login/yahoojapan.py
 - url: /logout
   script: logout.py
-- url: /.*
-  script: asklogin.py
 - url: /html
   static_dir: html
+- url: /css
+  static_dir: css
+- url: /.*
+  script: asklogin.py

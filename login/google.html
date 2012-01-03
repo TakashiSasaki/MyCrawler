@@ -1,9 +1,14 @@
 <!DOCTYPE html>
 <html>
 	<head>
+		<link  rel="stylesheet" type="text/css" href="/css/header.css"/>
+		<link  rel="stylesheet" type="text/css" href="/css/footer.css"/>
 		<title>Login to Obomb Web with Google Acount</title>
 	</head>
 	<body>
+		<header>
+			{% include "header.html" %}
+		</header>
 		<h1>Login to Obomb Web with Google Acount</h1>
 		<p>
 			{% if  google_user_identifier %}
@@ -37,12 +42,8 @@
 				<td><a href="/login_mixi">Login</a></td>
 			</tr>
 		</table><a href="/logout">Log out from Obomb Web</a>
-		<p>
-			{% if session_id %}
-			Your session ID is {{ session_id }}.
-			{% else %}
-			You may visit this page accidentally. Visit the top page of Obomb Web to start over.
-			{% endif %}
-		</p>
+		<footer>
+			{% include "footer.html" %}
+		</footer>
 	</body>
 </html>
