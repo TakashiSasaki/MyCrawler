@@ -1,5 +1,5 @@
 from google.appengine.ext import db, blobstore
-import google.appengine.ext.db.polymodel
+from libobomb.SyncModel import SyncModel
 
 #from multiprocessing.managers import SyncManager
 #from google.appengine.api import users
@@ -39,23 +39,6 @@ class IriModel(db.Model):
     def GetFragment(self):
         return self.fragment
 
-class SyncModel(google.appengine.ext.db.polymodel.PolyModel):
-    """This class models hub style data synchronizing system.
-    idNumber is signed integer.
-    zero indicates invalid ID number.
-    negative idNumber indicates local ID number.
-    positive idNumber is assigned by obomb web service and globally unique.
-    None owner indicates that the instance is well-known and authorized by standards outside.
-    """
-    uuid = db.StringProperty()
-    owner = db.UserProperty()
-    lockBegins = db.DateTimeProperty()
-    lockEnds = db.DateTimeProperty()
-    versionNumber = db.IntegerProperty()
-    #lastUploaded = db.DateTimeProperty()
-    #lastDownloaded = db.DateTimeProperty()
-    #lastStableDurationBegins = db.DateTimeProperty()
-    #lastStableDurationEnds = db.DateTimeProperty()
 
 class ContentModel(SyncModel):
     """Properties in this model never relies on other information
