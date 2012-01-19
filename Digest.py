@@ -1,13 +1,8 @@
 import io
 import hashlib
 import base64
-from google.appengine.ext import db
 import operator
 
-class DigestModel(db.Model):
-    hashMethod = db.StringProperty()
-    hashBase32 = db.StringProperty()
-    size = db.IntegerProperty()
 
 class ReadBufferDigest(object):
     __slots__ = [ "sha1", "sha256", "md5", "histogram", "givenStartOffset", "givenEndOffset", "startOffset", "endOffset", "bufferedReader"]
