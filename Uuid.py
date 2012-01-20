@@ -32,6 +32,8 @@ def DecodeBase64Uuid(b64string):
 import unittest
 class Test(unittest.TestCase):
     def setUp(self):
+        l = logging.getLogger()
+        l.setLevel(logging.DEBUG)
         pass
     def tearDown(self):
         pass
@@ -47,4 +49,6 @@ class Test(unittest.TestCase):
         assert 16 == len(DecodeBase32Uuid(GetBase32Uuid()))
         assert 22 == len(GetBase64Uuid())
         assert 16 == len(DecodeBase64Uuid(GetBase64Uuid()))
+        logging.info(GetBase32Uuid())
         return True
+    
