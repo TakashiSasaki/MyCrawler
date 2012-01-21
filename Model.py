@@ -1,5 +1,6 @@
 from google.appengine.ext import db, blobstore
-from libobomb.SyncModel import SyncModel
+from libobomb.VersionedItemModel import VersionedItemModel
+from compiler.pycodegen import VERSION
 
 #from multiprocessing.managers import SyncManager
 #from google.appengine.api import users
@@ -40,7 +41,7 @@ class IriModel(db.Model):
         return self.fragment
 
 
-class ContentModel(SyncModel):
+class ContentModel(VersionedItemModel):
     """Properties in this model never relies on other information
     except the data that sourceUri points to.
     SHA512 is the best on 64bit machine for now.
@@ -60,7 +61,7 @@ class ContentModel(SyncModel):
 
     contentBlobReference = blobstore.BlobReferenceProperty()
 
-class EquivalenceModel(SyncModel):
+class EquivalenceModel(VersionedItemModel):
     """Pivot is a set of verses.
     It represents an abstraction or concept.
     pivotId is primary idNumber that is one of verses list. 
@@ -71,7 +72,7 @@ class EquivalenceModel(SyncModel):
     alphabeticVariant = db.ReferenceProperty(ContentModel, collection_name="alphabeticvariant_set")
     rubyVariant = db.ReferenceProperty(ContentModel, collection_name="rubyvariant_set")
 
-class ExclusionModel(SyncModel):
+class ExclusionModel(VersionedItemModel):
     #exclusionId = db.IntegerProperty()
     exclusives = db.ListProperty(db.Key) # db.Key refers an instance of EquivalenceModel 
     #parentKnot = db.IntegerProperty()   
@@ -83,14 +84,14 @@ class ExclusionModel(SyncModel):
     #createdDateTime = db.DateTimeProperty()
     #modifiedDateTime = db.DateTimeProperty()
 
-class PredicationModel(SyncModel):
+class PredicationModel(VersionedItemModel):
     """A predication is a pair of two terms."""
     #predicationId = db.IntegerProperty()
     arc = db.ReferenceProperty(ContentModel, collection_name="arc_set")
     node = db.ReferenceProperty(ContentModel, collection_name="node_set")
 
 
-class MetadataModel(SyncModel):
+class MetadataModel(VersionedItemModel):
     """A metadata is a set of predications"""
     #metadataId = db.IntegerProperty()
     predications = db.ListProperty(db.Key) # db.Key refers an instance of PredicationModel
