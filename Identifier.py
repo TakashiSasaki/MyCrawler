@@ -8,19 +8,20 @@ from google.appengine.ext.db import URLProperty, StringListProperty, \
     ListProperty, BooleanProperty, ReferenceProperty, StringProperty
 from google.appengine.api.datastore import Key
 from unittest.case import TestCase
-from libobomb.SyncItemModel import SyncItemModel
 from GaeAdopter import Initialize
 from libobomb.Uuid import GetBase32Uuid
+from libobomb.VersionedItemModel import VersionedItemModel
 
-class IdentifierModel(SyncItemModel):
+class IdentifierModel(VersionedItemModel):
     identifierString = ReferenceProperty(required=True)
     locationString = ReferenceProperty(required=True)
-    circumstancesKeywords = StringListProperty()
-    contentsKeywords = StringListProperty()
+    selfDescriptiveWords = StringListProperty()
+    circumstancesWords = StringListProperty()
+    contentsWords = StringListProperty()
     #children = ListProperty(Key)
     #complete = BooleanProperty()
     
-class ContainmentModel(SyncItemModel):
+class ContainmentModel(VersionedItemModel):
     parentIdentifier = ReferenceProperty(IdentifierModel)
     childrenIdentifiers = ListProperty(Key)
     completeness = BooleanProperty()
@@ -37,10 +38,10 @@ class Test(TestCase):
     def testSomething(self):
         Initialize("obomb")
         identifier = IdentifierModel()
-        identifier.identifierUri="urn:uuid:"+GetBase32Uuid()
-        identifier.locationUri="file://myhost/foo/bar/hoge.iso"
-        identifier.circumstancesKeywords=["いちご", "メロン"]
-        identifier.contentsKeywords=["動物", "植物"]
+        identifier.identifierUri = "urn:uuid:" + GetBase32Uuid()
+        identifier.locationUri = "file://myhost/foo/bar/hoge.iso"
+        identifier.circumstancesKeywords = ["いちご", "メロン"]
+        identifier.contentsKeywords = ["動物", "植物"]
         identifier.owner = 100
         identifier.put()
         gql = IdentifierModel.gql("")
