@@ -4,24 +4,11 @@ Created on 2012/01/19
 @author: Takashi
 '''
 from google.appengine.ext.db.polymodel import PolyModel
-from google.appengine.ext.db import DateTimeProperty, IntegerProperty, EmailProperty, \
-    ReferenceProperty, Model, StringProperty, BooleanProperty, ListProperty
+from google.appengine.ext.db import DateTimeProperty, IntegerProperty, ReferenceProperty
 from unittest.case import TestCase
 import datetime
 from GaeAdopter import Initialize
-from google.appengine.api.datastore_types import Key
-
-class BoundAccountModel(PolyModel):
-    serviceName = StringProperty(required=True)
-    loginName = StringProperty(required=True)
-
-class ObombUserModel(Model):
-    displayName = StringProperty(required=True)
-    email = EmailProperty(required=True)
-    email2 = EmailProperty()
-    lastAccessTime = DateTimeProperty(required=True)
-    deleted = BooleanProperty(required=True)
-    boundAccounts = ListProperty(Key)
+from libobomb.User import ObombUserModel
 
 class VersionedItemPolyModel(PolyModel):
     """This class models hub style data synchronizing system.
@@ -40,6 +27,7 @@ class VersionedItemPolyModel(PolyModel):
     #lastDownloaded = db.DateTimeProperty()
     #lastStableDurationBegins = db.DateTimeProperty()
     #lastStableDurationEnds = db.DateTimeProperty()
+
 class Test(TestCase):
     import logging
     logger = logging.getLogger()
@@ -50,22 +38,6 @@ class Test(TestCase):
     
     def tearDown(self):
         pass
-    
-    def testObombUserModel(self):
-        Initialize("obomb")
-        gql = ObombUserModel.gql("WHERE displayName = :1", ["TestUser"])
-        for x in gql.fetch(1000):
-            x.delete()
-        self.assertEqual(0, gql.count())
-        bound_account = BoundAccountModel(loginName="null", serviceName="Twitter")
-        bound_account.put()
-        obomb_user = ObombUserModel(displayName="TestUser", email="testuser@example.com", lastAccessTime=datetime.datetime.now(), deleted=False)
-        obomb_user.boundAccounts = [bound_account.key()]
-        obomb_user.put()     
-        self.assertEqual(1, gql.count())
-        instance = gql.get()
-        instance.delete()
-        self.assertEqual(0, gql.count())
 
     def testVersionedItemPolyModel(self):
         Initialize("obomb")
