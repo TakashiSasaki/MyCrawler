@@ -9,7 +9,7 @@
     <publisher>Takashi SASAKI</publisher>
     <url>http://twitter.com/TakashiSasaki</url>
     <description>Object oriented metadatabase</description>
-    <icon>obomb_app_logo.png</icon>
+    <icon>default_app_logo.png</icon>
     <copyright>2011 by Takashi Sasaki</copyright>
     <!-- Window Definition - these values can be edited -->
     <window>
