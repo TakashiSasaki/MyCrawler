@@ -5,19 +5,32 @@
 
 '''
 from google.appengine.ext.db import URLProperty, StringListProperty, \
-    ListProperty, BooleanProperty, ReferenceProperty, StringProperty
+    ListProperty, BooleanProperty, ReferenceProperty, StringProperty, Model
 from google.appengine.api.datastore import Key
 from unittest.case import TestCase
 from GaeAdopter import Initialize
 from libobomb.Uuid import GetBase32Uuid
+from google.appengine.ext.db.polymodel import PolyModel
 from libobomb.VersionedItemModel import VersionedItemModel
 
+class WordsModel(PolyModel):
+    words = StringListProperty()
+    
+class LabelsModel(WordsModel):
+    pass
+    
+class CircumstanceModel(WordsModel):
+    pass
+
+class ContentModel(WordsModel):
+    pass
+
 class IdentifierModel(VersionedItemModel):
-    identifierString = ReferenceProperty(required=True)
-    locationString = ReferenceProperty(required=True)
-    selfDescriptiveWords = StringListProperty()
-    circumstancesWords = StringListProperty()
-    contentsWords = StringListProperty()
+    identifierString = StringProperty(required=True)
+    timeSpacePoints = ListProperty(Key,required=True)
+    labels = ReferenceProperty(LabelsModel)
+    circumstances = ListProperty(Key)
+    contents = ListProperty(Key)
     #children = ListProperty(Key)
     #complete = BooleanProperty()
     
