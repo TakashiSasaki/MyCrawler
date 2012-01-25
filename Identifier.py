@@ -12,6 +12,7 @@ from GaeAdopter import Initialize
 from libobomb.Uuid import GetBase32Uuid
 from google.appengine.ext.db.polymodel import PolyModel
 from libobomb.VersionedItemModel import VersionedItemModel
+import logging
 
 class WordsModel(PolyModel):
     words = StringListProperty()
@@ -25,6 +26,14 @@ class CircumstanceModel(WordsModel):
 class ContentModel(WordsModel):
     pass
 
+def IsInstances(list_, class_):
+    assert isinstance(list_, list) or isinstance(list_, tuple)
+    assert isinstance(class_, type)
+    for x in list_:
+        if not isinstance(x, class_):
+            return False
+    return True
+
 class IdentifierModel(VersionedItemModel):
     identifierString = StringProperty(required=True)
     timeSpacePoints = ListProperty(Key,required=True)
@@ -33,6 +42,8 @@ class IdentifierModel(VersionedItemModel):
     contents = ListProperty(Key)
     #children = ListProperty(Key)
     #complete = BooleanProperty()
+    def setCircumstances(self, circumstances_):
+        pass
     
 class ContainmentModel(VersionedItemModel):
     parentIdentifier = ReferenceProperty(IdentifierModel)
@@ -63,3 +74,18 @@ class Test(TestCase):
         for x in cursor:
             assert isinstance(x, IdentifierModel)
             print x
+
+    def testClassType(self):
+        class A(object):
+            pass
+        alist = [A(), A(), A()]
+        assert IsInstances(alist, A)
+        logger = logging.getLogger()
+        logger.debug(type(A))
+        
+if __name__ == "__main__":
+    class A(object):
+        pass
+    print type(A)
+    print isinstance(A, type)
+    
