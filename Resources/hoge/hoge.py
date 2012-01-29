@@ -1,0 +1,3 @@
+class hoge(object):
+    pass
+

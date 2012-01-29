@@ -4,3 +4,6 @@
 [submodule "Resources/GaeAdopter"]
 	path = Resources/GaeAdopter
 	url = git@github.com:TakashiSasaki/GaeAdopter.git
+[submodule "Resources/furl"]
+	path = Resources/furl
+	url = https://github.com/gruns/furl.git
