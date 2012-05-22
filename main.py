@@ -34,11 +34,12 @@ if __name__ == "__main__":
         print ("2: run demo_app by paste on localhost:8001")
         a = raw_input("3: exit >")
         if a == "1":
-            t = WsgirefThread()
+            import myapp
+            t = WsgirefThread(myapp.MyApp())
             t.start()
             webbrowser.open("http://localhost:8001/", autoraise=1)
         elif a == "2":
-            t = PasteThread()
+            t = PasteThread(myapp.MyApp())
             t.start()
             webbrowser.open("http://localhost:8002/", autoraise=1)
         elif a == "3":
