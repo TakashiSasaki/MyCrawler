@@ -47,4 +47,6 @@ if __name__ == "__main__":
     import myapp
     WsgirefThread(myapp.MyApp(), 8003).start()
     PasteThread(myapp.MyApp(), 8004).start()
+    WsgirefThread(myapp.MyApp2(), 8005).start()
+    PasteThread(myapp.MyApp2(), 8006).start()
     webbrowser.open("http://localhost:8001/", autoraise=1)
