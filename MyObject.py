@@ -3,6 +3,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, String, Integer, MetaData, create_engine, DateTime
 from sqlalchemy.orm.session import sessionmaker
 from sqlalchemy.exc import IntegrityError
+from datetime import datetime, timedelta
 metadata = MetaData()
 DeclarativeBase = declarative_base(metadata=metadata)
 
@@ -45,7 +46,7 @@ class MemoMap(DeclarativeBase):
         self.memoId = memo_id
         self.memoName = memo_name
     
-class MySession(DeclarativeBase):
+class MyCrawl(DeclarativeBase):
     __tablename__ = "MySession"
     __table_args__ = {'sqlite_autoincrement': True}
     sessionId = Column(Integer(), primary_key=True)
@@ -54,7 +55,8 @@ class MySession(DeclarativeBase):
     endDateTime = Column(DateTime(), nullable=False)
     userName = Column(String(), nullable=False)
     userDomain = Column(String(), nullable=False)
-    items = Column(Integer(), nullable=False)
+    nProcessedItems = Column(Integer(), nullable=False)
+    nProcessedBytes = Column(Integer(), nullable=False)
     
     def __init__(self, email_style_user_identifier=None):
         from uuid import getnode
@@ -63,7 +65,8 @@ class MySession(DeclarativeBase):
             self._setUserByEnvironment()
         else:
             self._setUserByEmail(email_style_user_identifier)
-        self.items = 0
+        self.nProcessedBytes = 0
+        self.nProcessedItems = 0
     
     def _setUserByEmail(self, email):
         import re
@@ -97,11 +100,9 @@ class MySession(DeclarativeBase):
         self.userDomain = host_name
         
     def begin(self):
-        from datetime import datetime
         self.beginDateTime = datetime.now()
     
     def end(self):
-        from datetime import datetime
         self.endDateTime = datetime.now()
         
     @classmethod
@@ -113,9 +114,27 @@ class MySession(DeclarativeBase):
         except:
             pass
         
-    def increment(self):
-        self.items += 1
-
+    def increment(self, processed_bytes):
+        self.nProcessedBytes += processed_bytes
+        self.nProcessedItems += 1
+        
+    def getNumberOfProcessedBytes(self):
+        return self.nProcessedBytes
+    
+    def getNumberOfProcessedItems(self):
+        return self.nProcessedItems
+    
+    def getElapsedSeconds(self):
+        now = datetime.now()
+        elapsed = now - self.beginDateTime
+        assert isinstance(elapsed, timedelta)
+        return elapsed.total_seconds()
+    
+    def getFilesPerSecond(self):
+        return self.getNumberOfProcessedItems() / self.getElapsedSeconds()
+    
+    def getBytesPerSecond(self):
+        return self.getNumberOfProcessedBytes() / self.getElapsedSeconds()
 
 if __name__ == "__main__":
     engine = create_engine("sqlite:///test3.sqlite", echo=True)
@@ -129,11 +148,11 @@ if __name__ == "__main__":
     except IntegrityError:
         print ("the row already exists")
     
-    my_session = MySession("a@b")
+    my_session = MyCrawl("a@b")
     print (my_session.userName)
     print (my_session.userDomain)
 
-    my_session = MySession()
+    my_session = MyCrawl()
     my_session.begin()
     print (my_session.userName)
     print (my_session.userDomain)
@@ -143,5 +162,5 @@ if __name__ == "__main__":
     session.commit()
     print (my_session.sessionId)
 
-    MySession.dropTable()
+    MyCrawl.dropTable()
     #MyObject.dropTable()
