@@ -54,6 +54,7 @@ class MySession(DeclarativeBase):
     endDateTime = Column(DateTime(), nullable=False)
     userName = Column(String(), nullable=False)
     userDomain = Column(String(), nullable=False)
+    items = Column(Integer(), nullable=False)
     
     def __init__(self, email_style_user_identifier=None):
         from uuid import getnode
@@ -62,6 +63,7 @@ class MySession(DeclarativeBase):
             self._setUserByEnvironment()
         else:
             self._setUserByEmail(email_style_user_identifier)
+        self.items = 0
     
     def _setUserByEmail(self, email):
         import re
@@ -110,6 +112,9 @@ class MySession(DeclarativeBase):
             my_session_table.drop(engine, checkfirst=True)
         except:
             pass
+        
+    def increment(self):
+        self.items += 1
 
 
 if __name__ == "__main__":

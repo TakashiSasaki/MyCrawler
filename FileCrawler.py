@@ -34,7 +34,10 @@ class FileInfo(object):
 BUFFER_SIZE = 1024 * 1024
 
 def _calculateGitBlobHash(path, size):
-    f = open(path, "rb")
+    try:
+        f = open(path, "rb")
+    except IOError:
+        return None
     s = sha1()
     s.update("blob %s\0" % size)
     while True:
@@ -43,32 +46,58 @@ def _calculateGitBlobHash(path, size):
         s.update(b)
     return s.hexdigest()
 
+class GitBlobHash(Thread):
+    def __init__(self, path, size):
+        Thread.__init__(self)
+        self.path = path
+        self.size = size
+
+    def run(self):
+        try:
+            f = open(self.path, "rb")
+        except IOError:
+            self.gitBlobHash = None
+        s = sha1()
+        s.update("blob %s\0" % self.size)
+        while True:
+            b = f.read(BUFFER_SIZE)
+            if len(b) == 0: break
+            s.update(b)
+        self.gitBlobHash = s.hexdigest()
+
 class FileCrawler(Thread):
     def __init__(self, path, sqlalchemy_session):
         Thread.__init__(self)
         self.path = path
         self.sqlAlchemySession = sqlalchemy_session
-        pass
+        self.hostName = _getHostName()
+        self.count = 0
     
     def run(self):
         for root, dirs, files in os.walk(self.path):
             for f in files:
                 p = root + os.path.sep + f
+                s = os.stat(p)
+                git_blob_hash = GitBlobHash(p, s)
+                git_blob_hash.start()
                 ap = os.path.abspath(p)
-                s = os.stat(ap)
                 file_info = FileInfo()
                 file_info.absolutePath = ap
                 file_info.st_size = s.st_size
                 file_info.st_mtime = s.st_mtime
                 file_info.st_ctime = s.st_ctime
-                file_info.gitBlobHash = _calculateGitBlobHash(ap, s.st_size)
-                print (file_info.toJson())
                 my_object = MyObject()
                 my_object.lastModified = datetime.fromtimestamp(file_info.st_mtime) # naive or aware?
                 my_object.lastSeen = datetime.now()
-                my_object.uri = "git:blob:" + file_info.gitBlobHash
-                my_object.url = "file://" + _getHostName() + "/" + file_info.absolutePath
+                git_blob_hash.join()
+                file_info.gitBlobHash = git_blob_hash.gitBlobHash
+                #print (file_info.toJson())
+                if file_info.gitBlobHash is not None:
+                    my_object.uri = "git:blob:" + file_info.gitBlobHash
+                my_object.url = "file://" + self.hostName + "/" + file_info.absolutePath
                 self.sqlAlchemySession.add(my_object)
+                self.count += 1
+                print (self.count)
 
 class _Test(TestCase):
     def setUp(self):
@@ -77,6 +106,6 @@ class _Test(TestCase):
         self.session = SessionClass()
     
     def test1(self):
-        file_crawler = FileCrawler(".", self.session)
+        file_crawler = FileCrawler("C://", self.session)
         file_crawler.start()
         file_crawler.join()
