@@ -110,7 +110,7 @@ class MySession(DeclarativeBase):
             my_session_table.drop(engine, checkfirst=True)
         except:
             pass
-        
+
 
 if __name__ == "__main__":
     engine = create_engine("sqlite:///test3.sqlite", echo=True)

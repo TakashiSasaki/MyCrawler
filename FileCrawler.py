@@ -3,6 +3,7 @@ from MyObject import MyObject
 import os
 import os.path
 import json
+from datetime import datetime
 
 def _getHostName():
     try:
@@ -39,7 +40,7 @@ def _calculateGitBlobHash(path, size):
         s.update(b)
     return s.hexdigest()
 
-def crawlUnderTheDirectory(path):
+def crawlUnderTheDirectory(path, session):
     for root, dirs, files in os.walk(path):
         for f in files:
             p = root + os.path.sep + f
@@ -52,9 +53,22 @@ def crawlUnderTheDirectory(path):
             file_info.st_ctime = s.st_ctime
             file_info.gitBlobHash = _calculateGitBlobHash(ap, s.st_size)
             print (file_info.toJson())
-            
+            my_object = MyObject()
+            my_object.lastModified = datetime.fromtimestamp(file_info.st_mtime) # naive or aware?
+            my_object.lastSeen = datetime.now()
+            my_object.uri = "git:blob:" + file_info.gitBlobHash
+            my_object.url = "file://" + _getHostName() + "/" + file_info.absolutePath
+            session.add(my_object)
 
 from unittest import TestCase
 class _Test(TestCase):
+    def setUp(self):
+        from sqlalchemy import create_engine
+        engine = create_engine("sqlite:///test3.sqlite", echo=True)
+        from sqlalchemy.orm.session import sessionmaker
+        SessionClass = sessionmaker(bind=engine)
+        self.session = SessionClass()
+    
     def test1(self):
-        crawlUnderTheDirectory(".")
+        crawlUnderTheDirectory(".", self.session)
+        self.session.commit()
