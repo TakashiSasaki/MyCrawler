@@ -9,7 +9,7 @@ DeclarativeBase = declarative_base(metadata=metadata)
 class MyObject(DeclarativeBase):
     __tablename__ = "MyObject"
     __table_args__ = {'sqlite_autoincrement': True}
-    id = Column(Integer, primary_key=True) #unique only on this database
+    objectId = Column(Integer, primary_key=True) #unique only on this database
     sessionId = Column(Integer) #identical for one session
     uri = Column(String())
     url = Column(String())
