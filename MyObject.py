@@ -1,6 +1,7 @@
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, String, Date, Integer, MetaData, create_engine
 from sqlalchemy.orm.session import sessionmaker
+from sqlalchemy.exc import IntegrityError
 metadata = MetaData()
 DeclarativeBase = declarative_base(metadata=metadata)
 
@@ -8,12 +9,13 @@ class MyObject(DeclarativeBase):
     __tablename__ = "MyObject"
     id = Column(Integer, primary_key=True) #unique only on this database
     sessionId = Column(Integer) #identical for one session
-    gitHash = Column(String()) #git style hash value
     uri = Column(String())
-    size = Column(Integer())
+    url = Column(String())
+    size = Column(Integer(), nullable=True)
     lastModified = Column(Date()) #last modified datetime
     lastSeen = Column(Date()) #last seen datetime
     jsonString = Column(String()) #serialized data
+    belongsTo = Column(Integer)
     memo0 = Column(String(), nullable=True)
     memo1 = Column(String(), nullable=True)
     memo2 = Column(String(), nullable=True)
@@ -51,6 +53,9 @@ if __name__ == "__main__":
 
     SessionClass = sessionmaker(bind=engine)
     session = SessionClass()
-    session.add(MemoMap(1,"one"))
-    session.commit()
+    session.add(MemoMap(2, "two"))
+    try:
+        session.commit()
+    except IntegrityError:
+        print ("the row already exists")
     
