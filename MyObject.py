@@ -12,13 +12,13 @@ class MyObject(DeclarativeBase):
     __tablename__ = "MyObject"
     __table_args__ = {'sqlite_autoincrement': True}
     objectId = Column(Integer, primary_key=True) #unique only on this database
-    crawlId = Column(Integer, ForeignKey('MyCrawl.crawlId')) #identical for one session
+    crawlId = Column(Integer, ForeignKey('MyCrawl.crawlId'), index=True) #identical for one session
     myCrawl = relation(MyCrawl)
     uri = Column(String())
-    url = Column(String())
+    url = Column(String(), index=True)
     size = Column(Integer(), nullable=True)
     lastModified = Column(DateTime()) #last modified datetime
-    lastSeen = Column(DateTime()) #last seen datetime
+    lastSeen = Column(DateTime(), index=True) #last seen datetime
     jsonString = Column(String()) #serialized data
     belongsTo = Column(Integer())
     completed = Column(Boolean())

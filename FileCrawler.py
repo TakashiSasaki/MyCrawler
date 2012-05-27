@@ -22,7 +22,7 @@ def _getHostName():
         host_name = None
     return host_name
 
-BUFFER_SIZE = 1024 * 1024
+BUFFER_SIZE = 1024 * 1024 * 4
 BEST_BEFORE_PERIOD_IN_SECOND = 3600
 
 def _calculateGitBlobHash(path, size):
@@ -37,7 +37,7 @@ def _calculateGitBlobHash(path, size):
         if len(b) == 0: break
         s.update(b)
     return s.hexdigest()
-
+ 
 class _GitBlobHash(Thread):
     
     def __init__(self, path, size):
@@ -137,16 +137,17 @@ class FileCrawler(Thread):
     
     def __str__(self):
         locale.setlocale(locale.LC_ALL, "")
-        return "%dsec %s (%s) bytes, %s (%d) files" % (self.myCrawl.getElapsedSeconds(),
+        return "%dsec %s (%s) bytes, %s/%s (%d) files" % (self.myCrawl.getElapsedSeconds(),
                                                           locale.format("%d", self.getNumberOfProcessedBytes(), grouping=True),
                                                           locale.format("%d", self.getBytesPerSecond(), grouping=True),
                                                           locale.format("%d", self.getNumberOfProcessedFiles(), grouping=True),
+                                                          locale.format("%d", self.skipCount, grouping=True),
                                                           self.getFilesPerSecond())
 
 from unittest import TestCase
 from logging import getLogger, debug, DEBUG
 class _Test(TestCase):
-    NUMBER_OF_FILES_TO_PROCESS_IN_ONE_TIME = 10000
+    NUMBER_OF_FILES_TO_PROCESS_IN_ONE_TIME = None
     ECHO_SQL_STATEMENT = False
     
     def setUp(self):

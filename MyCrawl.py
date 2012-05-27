@@ -13,7 +13,7 @@ class MyCrawl(DeclarativeBase):
     __tablename__ = "MyCrawl"
     __table_args__ = {'sqlite_autoincrement': True}
     crawlId = Column(Integer(), primary_key=True)
-    agentId = Column(Integer(), nullable=False) #MAC address can be used
+    agentId = Column(Integer(), nullable=False, index=True) #MAC address can be used
     beginDateTime = Column(DateTime(), nullable=True)
     endDateTime = Column(DateTime(), nullable=True)
     userName = Column(String(), nullable=False)
