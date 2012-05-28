@@ -9,7 +9,7 @@ from sqlalchemy import create_engine
 
 
 
-class MyCrawlTable(DeclarativeBase):
+class MyCrawl(DeclarativeBase):
     __tablename__ = "MyCrawl"
     __table_args__ = {'sqlite_autoincrement': True}
     crawlId = Column(Integer(), primary_key=True)
@@ -112,15 +112,15 @@ class _Test(TestCase):
     def setUp(self):
         engine = create_engine("sqlite:///test3.sqlite", echo=True)
         #DeclarativeBase.metadata.create_all(engine)
-        MyCrawlTable.dropTable(engine)
-        MyCrawlTable.createTable(engine)
+        MyCrawl.dropTable(engine)
+        MyCrawl.createTable(engine)
         SessionClass = sessionmaker(bind=engine)
         self.session = SessionClass()
     
     def testAutoIncrement(self):
-        my_crawl_1 = MyCrawlTable()
+        my_crawl_1 = MyCrawl()
         self.session.add(my_crawl_1)
-        my_crawl_2 = MyCrawlTable()
+        my_crawl_2 = MyCrawl()
         self.session.add(my_crawl_2)
         self.session.commit()
         self.assertEqual(my_crawl_1.crawlId + 1, my_crawl_2.crawlId)
