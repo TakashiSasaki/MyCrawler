@@ -5,15 +5,16 @@ from sqlalchemy.orm import relation
 from sqlalchemy.orm.session import sessionmaker
 from sqlalchemy.exc import IntegrityError
 from datetime import datetime, timedelta
-from MyCrawl import MyCrawl
+from MyCrawlTable import MyCrawlTable
 from DeclarativeBase import DeclarativeBase
+from unittest.case import TestCase
 
 class MyObject(DeclarativeBase):
     __tablename__ = "MyObject"
     __table_args__ = {'sqlite_autoincrement': True}
     objectId = Column(Integer, primary_key=True) #unique only on this database
     crawlId = Column(Integer, ForeignKey('MyCrawl.crawlId'), index=True) #identical for one session
-    myCrawl = relation(MyCrawl)
+    myCrawlTable = relation(MyCrawlTable)
     uri = Column(String())
     url = Column(String(), index=True)
     size = Column(Integer(), nullable=True)
@@ -61,32 +62,41 @@ class MemoMap(DeclarativeBase):
         self.memoId = memo_id
         self.memoName = memo_name
     
+class _Test(TestCase):
+    def setUp(self):
+        engine = create_engine("sqlite:///test3.sqlite", echo=True)
+        DeclarativeBase.metadata.create_all(engine)
+
+        SessionClass = sessionmaker(bind=engine)
+        self.session = SessionClass()
+        
+    def test1(self):
+        self.session.add(MemoMap(2, "two"))
+        try:
+            self.session.commit()
+        except IntegrityError:
+            print ("the row already exists")
+        
+    def test2(self):
+        my_session = MyCrawlTable("a@b")
+        print (my_session.userName)
+        print (my_session.userDomain)
+    
+    def test3(self):
+        my_session = MyCrawlTable()
+        my_session.begin()
+        print (my_session.userName)
+        print (my_session.userDomain)
+        my_session.end()
+        
+        #session = SessionClass()
+        self.session.add(my_session)
+        self.session.commit()
+        print (my_session.crawlId)
+    
+        MyCrawlTable.dropTable()
+        #MyObject.dropTable()
 
 if __name__ == "__main__":
-    engine = create_engine("sqlite:///test3.sqlite", echo=True)
-    DeclarativeBase.metadata.create_all(engine)
-
-    SessionClass = sessionmaker(bind=engine)
-    session = SessionClass()
-    session.add(MemoMap(2, "two"))
-    try:
-        session.commit()
-    except IntegrityError:
-        print ("the row already exists")
-    
-    my_session = MyCrawl("a@b")
-    print (my_session.userName)
-    print (my_session.userDomain)
-
-    my_session = MyCrawl()
-    my_session.begin()
-    print (my_session.userName)
-    print (my_session.userDomain)
-    my_session.end()
-    session = SessionClass()
-    session.add(my_session)
-    session.commit()
-    print (my_session.sessionId)
-
-    MyCrawl.dropTable()
-    #MyObject.dropTable()
+    import unittest
+    unittest.main()
