@@ -1,15 +1,15 @@
 from sqlalchemy import Column, String, Integer, DateTime
-from sqlalchemy.orm import relation
+#from sqlalchemy.orm import relation
 from sqlalchemy.orm.session import sessionmaker
-from sqlalchemy.exc import IntegrityError
+#from sqlalchemy.exc import IntegrityError
 from datetime import datetime, timedelta
-from unittest import TestCase
+from unittest import TestCase, main
 from DeclarativeBase import DeclarativeBase
 from sqlalchemy import create_engine
 
 
 
-class MyCrawl(DeclarativeBase):
+class MyCrawlTable(DeclarativeBase):
     __tablename__ = "MyCrawl"
     __table_args__ = {'sqlite_autoincrement': True}
     crawlId = Column(Integer(), primary_key=True)
@@ -111,15 +111,19 @@ class MyCrawl(DeclarativeBase):
 class _Test(TestCase):
     def setUp(self):
         engine = create_engine("sqlite:///test3.sqlite", echo=True)
-        MyCrawl.dropTable(engine)
-        MyCrawl.createTable(engine)
+        #DeclarativeBase.metadata.create_all(engine)
+        MyCrawlTable.dropTable(engine)
+        MyCrawlTable.createTable(engine)
         SessionClass = sessionmaker(bind=engine)
         self.session = SessionClass()
     
-    def test(self):
-        my_crawl_1 = MyCrawl()
+    def testAutoIncrement(self):
+        my_crawl_1 = MyCrawlTable()
         self.session.add(my_crawl_1)
-        my_crawl_2 = MyCrawl()
+        my_crawl_2 = MyCrawlTable()
         self.session.add(my_crawl_2)
         self.session.commit()
         self.assertEqual(my_crawl_1.crawlId + 1, my_crawl_2.crawlId)
+
+if __name__ == "__main__":
+    main()
