@@ -8,6 +8,7 @@ from wsgiref.simple_server import demo_app
 from threading import Thread
 
 class WsgirefThread(Thread):
+    """wsgiref.simple_server is a WSGI application runner."""
     def __init__(self, app=demo_app, port=8001):
         Thread.__init__(self)
         self.app = app
@@ -22,8 +23,9 @@ class WsgirefThread(Thread):
         from wsgiref.simple_server import make_server
         httpd = make_server('', self.port, self.app)
         httpd.serve_forever()
-    
+
 class PasteThread(Thread):
+    """paste.httpserve is a WSGI application runner. """
     def __init__(self, app=demo_app, port=8002):
         Thread.__init__(self)
         self.app = app
