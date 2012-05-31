@@ -47,3 +47,8 @@ if __name__ == "__main__":
     WsgirefThread(myapp.MyApp2(), 8005).start()
     PasteThread(myapp.MyApp2(), 8006).start()
     webbrowser.open("http://localhost:8001/", autoraise=1)
+    webbrowser.open("http://localhost:8002/", autoraise=1)
+    webbrowser.open("http://localhost:8003/", autoraise=1)
+    webbrowser.open("http://localhost:8004/", autoraise=1)
+    webbrowser.open("http://localhost:8005/", autoraise=1)
+    webbrowser.open("http://localhost:8006/", autoraise=1)
