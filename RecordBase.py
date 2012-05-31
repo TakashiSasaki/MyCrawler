@@ -10,8 +10,8 @@ from datetime import datetime, timedelta
 from DeclarativeBase import DeclarativeBase
 from MyCrawl import MyCrawl
 
-class MyObject(DeclarativeBase):
-    __tablename__ = "MyObject"
+class RecordBase(DeclarativeBase):
+    __tablename__ = "Record"
     __table_args__ = {'sqlite_autoincrement': True}
     
     objectId = Column(Integer, primary_key=True) #unique only on this database
