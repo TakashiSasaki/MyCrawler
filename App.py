@@ -1,6 +1,5 @@
+from config import *
 from webapp2 import RequestHandler, WSGIApplication
-from wsgiref.simple_server import demo_app
-
 
 class MyHandler(RequestHandler):
     def get(self):
@@ -30,6 +29,6 @@ def MyApp2():
 
 import webbrowser
 if __name__ == "__main__":
-    from main import PasteThread
+    from WsgiRunner import PasteThread
     PasteThread(MyApp(), 10523).start()
     webbrowser.open("http://localhost:10523/", autoraise=1)
