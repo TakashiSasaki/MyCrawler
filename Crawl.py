@@ -1,11 +1,11 @@
+from config import *
 from sqlalchemy import Column, String, Integer, DateTime
 #from sqlalchemy.orm import relation
-from sqlalchemy.orm.session import sessionmaker
+#from sqlalchemy.orm.session import sessionmaker
 #from sqlalchemy.exc import IntegrityError
 from datetime import datetime, timedelta
 from unittest import TestCase, main
-from DeclarativeBase import DeclarativeBase
-from sqlalchemy import create_engine
+#from sqlalchemy import create_engine
 
 
 
@@ -69,7 +69,7 @@ class Crawl(DeclarativeBase):
         self.endDateTime = datetime.now()
         
     @classmethod
-    def dropTable(cls, engine):
+    def dropTable(cls):
         try:
             table = DeclarativeBase.metadata.tables[cls.__tablename__]
             print (table)
@@ -78,7 +78,7 @@ class Crawl(DeclarativeBase):
             pass
         
     @classmethod
-    def createTable(cls, engine):
+    def createTable(cls):
         try:
             table = DeclarativeBase.metadata.tables[cls.__tablename__]
             table.create(engine, checkfirst=True)
@@ -110,12 +110,10 @@ class Crawl(DeclarativeBase):
 
 class _Test(TestCase):
     def setUp(self):
-        engine = create_engine("sqlite:///test3.sqlite", echo=True)
         #DeclarativeBase.metadata.create_all(engine)
-        Crawl.dropTable(engine)
-        Crawl.createTable(engine)
-        SessionClass = sessionmaker(bind=engine)
-        self.session = SessionClass()
+        Crawl.dropTable()
+        Crawl.createTable()
+        self.session = Session()
     
     def testAutoIncrement(self):
         my_crawl_1 = Crawl()

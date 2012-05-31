@@ -7,10 +7,8 @@ import socket
 from datetime import datetime
 from hashlib import sha1
 from threading import Thread
-from sqlalchemy import create_engine
-from sqlalchemy.orm.session import sessionmaker
 from time import sleep
-from FileInfo import FileInfo
+from FileInfo import FileRecord
 import locale
 
 EXCLUDE_DIRECTORIES = ["$Recycle.Bin"]
@@ -90,21 +88,21 @@ class FileCrawler(Thread):
         self.sqlAlchemySession = sqlalchemy_session
         self.hostName = _getHostName()
         self.crawl = Crawl()
-        self.sqlAlchemySession.add(self.myCrawl)
+        self.sqlAlchemySession.add(self.crawl)
         self.sqlAlchemySession.commit()
     
     def run(self):
-        self.myCrawl.begin()
+        self.crawl.begin()
         for root, dirs, files in os.walk(self.path):
             if len(dirs) > 0 and dirs[0] in EXCLUDE_DIRECTORIES: dirs = dirs[1:]
             for f in files:
                 path = root + os.path.sep + f
                 absolute_path = os.path.abspath(path)
                 url = "file://" + self.hostName + "/" + absolute_path
-                file_info = FileInfo()
+                file_info = FileRecord()
                 file_info.url = url
-                file_info.crawlId = self.myCrawl.crawlId
-                if file_info.exists(self.myCrawl.agentId, self.sqlAlchemySession, BEST_BEFORE_PERIOD_IN_SECOND):
+                file_info.crawlId = self.crawl.crawlId
+                if file_info.exists(self.crawl.agentId, self.sqlAlchemySession, BEST_BEFORE_PERIOD_IN_SECOND):
                     self.skipCount += 1
                     continue
                 stat = os.stat(path)
@@ -119,26 +117,26 @@ class FileCrawler(Thread):
                 if hash_string is not None:
                     file_info.uri = "git:blob:" + hash_string
                 self.sqlAlchemySession.add(file_info)
-                self.myCrawl.increment(git_blob_hash.getReadSize())
-            if self.maxFiles and  self.myCrawl.getNumberOfProcessedItems() >= self.maxFiles: break 
-        self.myCrawl.end()
+                self.crawl.increment(git_blob_hash.getReadSize())
+            if self.maxFiles and  self.crawl.getNumberOfProcessedItems() >= self.maxFiles: break 
+        self.crawl.end()
         self.sqlAlchemySession.commit()
     
     def getNumberOfProcessedFiles(self):
-        return self.myCrawl.getNumberOfProcessedItems()
+        return self.crawl.getNumberOfProcessedItems()
     
     def getNumberOfProcessedBytes(self):
-        return self.myCrawl.getNumberOfProcessedBytes()
+        return self.crawl.getNumberOfProcessedBytes()
     
     def getFilesPerSecond(self):
-        return self.myCrawl.getFilesPerSecond()
+        return self.crawl.getFilesPerSecond()
     
     def getBytesPerSecond(self):
-        return self.myCrawl.getBytesPerSecond()
+        return self.crawl.getBytesPerSecond()
     
     def __str__(self):
         locale.setlocale(locale.LC_ALL, "")
-        return "%dsec %s (%s) bytes, %s/%s (%d) files" % (self.myCrawl.getElapsedSeconds(),
+        return "%dsec %s (%s) bytes, %s/%s (%d) files" % (self.crawl.getElapsedSeconds(),
                                                           locale.format("%d", self.getNumberOfProcessedBytes(), grouping=True),
                                                           locale.format("%d", self.getBytesPerSecond(), grouping=True),
                                                           locale.format("%d", self.getNumberOfProcessedFiles(), grouping=True),
@@ -146,22 +144,22 @@ class FileCrawler(Thread):
                                                           self.getFilesPerSecond())
 
 class _Test(TestCase):
-    NUMBER_OF_FILES_TO_PROCESS_IN_ONE_TIME = None
     
     def setUp(self):
-        SessionClass = sessionmaker(bind=engine)
-        self.session = SessionClass()
-        RecordBase.createTable(engine)
-        Crawl.createTable(engine)
+        self.session = Session()
+        RecordBase.createTable()
+        Crawl.createTable()
         
     
     def test1(self):
-        file_crawler = FileCrawler("C://", self.session, self.NUMBER_OF_FILES_TO_PROCESS_IN_ONE_TIME)
+        file_crawler = FileCrawler("C://", self.session, max_files = 10)
         file_crawler.start()
-        while True:
+        count = 0
+        while count < 3:
             file_crawler.join(1)
             if not file_crawler.isAlive(): break
             print(file_crawler)
+            count += 1
 
 if __name__ == "__main__":
     main()

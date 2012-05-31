@@ -1,13 +1,10 @@
 from config import *
 #from __future__ import unicode_literals, print_function
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, String, Integer, MetaData, create_engine, DateTime, Boolean, ForeignKey
+from sqlalchemy import Column, String, Integer, DateTime, Boolean, ForeignKey
 from sqlalchemy.orm import relation
-from sqlalchemy.orm.session import sessionmaker
 from sqlalchemy.exc import IntegrityError
 from datetime import datetime, timedelta
 #from MyCrawlTable import MyCrawlTable
-from DeclarativeBase import DeclarativeBase
 #from MyCrawl import MyCrawl
 from Crawl import Crawl
 
@@ -146,8 +143,7 @@ class _Test(TestCase):
         #self.engine = create_engine("sqlite:///test3.sqlite", echo=True)
         DeclarativeBase.metadata.create_all(engine)
 
-        SessionClass = sessionmaker(bind=engine)
-        self.session = SessionClass()
+        self.session = Session()
         
     def test1(self):
         self.session.add(MemoMap(2, "two"))
@@ -172,7 +168,7 @@ class _Test(TestCase):
         self.session.commit()
         print (crawl.crawlId)
     
-        Crawl.dropTable(engine)
+        Crawl.dropTable()
 
 if __name__ == "__main__":
     main()
