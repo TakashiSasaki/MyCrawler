@@ -4,7 +4,6 @@ from sqlalchemy import Column, String, Integer, DateTime
 #from sqlalchemy.orm.session import sessionmaker
 #from sqlalchemy.exc import IntegrityError
 from datetime import datetime, timedelta
-from unittest import TestCase, main
 #from sqlalchemy import create_engine
 
 
@@ -72,10 +71,11 @@ class Crawl(DeclarativeBase):
     def dropTable(cls):
         try:
             table = DeclarativeBase.metadata.tables[cls.__tablename__]
-            print (table)
+            debug("dropping table " + str(table))
             table.drop(engine, checkfirst=True)
-        except:
-            pass
+        except Exception, e:
+            exception(e.message)
+            raise e
         
     @classmethod
     def createTable(cls):
@@ -83,8 +83,8 @@ class Crawl(DeclarativeBase):
             table = DeclarativeBase.metadata.tables[cls.__tablename__]
             table.create(engine, checkfirst=True)
         except Exception, e:
-            print (e.message)
-            pass
+            exception(e.message)
+            raise e
         
     def increment(self, processed_bytes):
         self.nProcessedBytes += processed_bytes
