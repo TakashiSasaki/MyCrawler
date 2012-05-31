@@ -41,7 +41,7 @@ if __name__ == "__main__":
     WsgirefThread().start()
     PasteThread().start()
     
-    import myapp
+    from sandbox import myapp
     WsgirefThread(myapp.MyApp(), 8003).start()
     PasteThread(myapp.MyApp(), 8004).start()
     WsgirefThread(myapp.MyApp2(), 8005).start()
