@@ -1,9 +1,4 @@
-'''
-Created on 2012/05/22
-
-@author: sasaki
-'''
-from __future__ import  print_function, unicode_literals
+from config import *
 from wsgiref.simple_server import demo_app
 from threading import Thread
 
