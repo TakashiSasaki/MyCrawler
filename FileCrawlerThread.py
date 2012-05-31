@@ -1,5 +1,6 @@
 from config import *
-from MyObject import MyObject, MyCrawl
+from RecordBase import RecordBase
+from Crawl import Crawl
 import os.path
 import json
 import socket  
@@ -88,7 +89,7 @@ class FileCrawler(Thread):
         self.path = path
         self.sqlAlchemySession = sqlalchemy_session
         self.hostName = _getHostName()
-        self.myCrawl = MyCrawl()
+        self.crawl = Crawl()
         self.sqlAlchemySession.add(self.myCrawl)
         self.sqlAlchemySession.commit()
     
@@ -150,8 +151,8 @@ class _Test(TestCase):
     def setUp(self):
         SessionClass = sessionmaker(bind=engine)
         self.session = SessionClass()
-        MyObject.createTable(engine)
-        MyCrawl.createTable(engine)
+        RecordBase.createTable(engine)
+        Crawl.createTable(engine)
         
     
     def test1(self):

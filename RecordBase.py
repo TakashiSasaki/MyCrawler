@@ -8,7 +8,8 @@ from sqlalchemy.exc import IntegrityError
 from datetime import datetime, timedelta
 #from MyCrawlTable import MyCrawlTable
 from DeclarativeBase import DeclarativeBase
-from MyCrawl import MyCrawl
+#from MyCrawl import MyCrawl
+from Crawl import Crawl
 
 class RecordBase(DeclarativeBase):
     __tablename__ = "Record"
@@ -19,8 +20,8 @@ class RecordBase(DeclarativeBase):
         """objectId is the primary key and automatically set"""
         return self.objectId
     
-    crawlId = Column(Integer, ForeignKey('MyCrawl.crawlId'), index=True) #identical for one session
-    myCrawlTable = relation(MyCrawl)
+    crawlId = Column(Integer, ForeignKey('Crawl.crawlId'), index=True) #identical for one session
+    myCrawlTable = relation(Crawl)
     def getCrawlId(self):
         """crawlId is given for one crawl and is a foreign key of MyCrawl table."""
         return self.crawlId
@@ -47,7 +48,7 @@ class RecordBase(DeclarativeBase):
     def setUrl(self, url_):
         assert isinstance(url_, str)
         from urlparse import urlparse, ParseResult
-        parse_result = urlparse(url_,allow_fragments=True)
+        parse_result = urlparse(url_, allow_fragments=True)
         rebuilt_url = parse_result.geturl()
         if rebuilt_url != url_:
             raise Exception("malformed URL: " + url_)
@@ -142,10 +143,10 @@ class MemoMap(DeclarativeBase):
     
 class _Test(TestCase):
     def setUp(self):
-        self.engine = create_engine("sqlite:///test3.sqlite", echo=True)
-        DeclarativeBase.metadata.create_all(self.engine)
+        #self.engine = create_engine("sqlite:///test3.sqlite", echo=True)
+        DeclarativeBase.metadata.create_all(engine)
 
-        SessionClass = sessionmaker(bind=self.engine)
+        SessionClass = sessionmaker(bind=engine)
         self.session = SessionClass()
         
     def test1(self):
@@ -156,24 +157,22 @@ class _Test(TestCase):
             print ("the row already exists")
         
     def test2(self):
-        my_session = MyCrawl("a@b")
-        print (my_session.userName)
-        print (my_session.userDomain)
+        crawl = Crawl("a@b")
+        self.assertEqual(crawl.userName, "a", "malformed user name")
+        self.assertEqual(crawl.userDomain, "b", "malformed user domain")
     
     def test3(self):
-        my_session = MyCrawl()
-        my_session.begin()
-        print (my_session.userName)
-        print (my_session.userDomain)
-        my_session.end()
+        crawl = Crawl()
+        crawl.begin()
+        self.assertGreater(len(crawl.userName), 0, "no user name was given")
+        self.assertGreater(len(crawl.userDomain), 0, "no user domain was given")
+        crawl.end()
         
-        #session = SessionClass()
-        self.session.add(my_session)
+        self.session.add(crawl)
         self.session.commit()
-        print (my_session.crawlId)
+        print (crawl.crawlId)
     
-        MyCrawl.dropTable(self.engine)
-        #MyObject.dropTable()
+        Crawl.dropTable(engine)
 
 if __name__ == "__main__":
     main()
