@@ -9,8 +9,8 @@ from sqlalchemy import create_engine
 
 
 
-class MyCrawl(DeclarativeBase):
-    __tablename__ = "MyCrawl"
+class Crawl(DeclarativeBase):
+    __tablename__ = "Crawl"
     __table_args__ = {'sqlite_autoincrement': True}
     crawlId = Column(Integer(), primary_key=True)
     agentId = Column(Integer(), nullable=False, index=True) #MAC address can be used
@@ -112,15 +112,15 @@ class _Test(TestCase):
     def setUp(self):
         engine = create_engine("sqlite:///test3.sqlite", echo=True)
         #DeclarativeBase.metadata.create_all(engine)
-        MyCrawl.dropTable(engine)
-        MyCrawl.createTable(engine)
+        Crawl.dropTable(engine)
+        Crawl.createTable(engine)
         SessionClass = sessionmaker(bind=engine)
         self.session = SessionClass()
     
     def testAutoIncrement(self):
-        my_crawl_1 = MyCrawl()
+        my_crawl_1 = Crawl()
         self.session.add(my_crawl_1)
-        my_crawl_2 = MyCrawl()
+        my_crawl_2 = Crawl()
         self.session.add(my_crawl_2)
         self.session.commit()
         self.assertEqual(my_crawl_1.crawlId + 1, my_crawl_2.crawlId)
