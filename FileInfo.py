@@ -4,6 +4,7 @@ from RecordBase import RecordBase
 from sqlalchemy import desc
 from Crawl import Crawl
 from datetime import datetime, timedelta
+from sqlalchemy.exc import OperationalError
 
 class FileRecord(RecordBase):
     __slots__ = ["created"]
@@ -34,8 +35,10 @@ def getLastFileInfo(agent_id, url, session):
 
 class _Test(TestCase):
     def setUp(self):
-        print ("setup")
-        Crawl.dropTable()
+        try:
+            Crawl.dropTable()
+        except OperationalError,e:
+            debug(e.message)
         RecordBase.dropTable()
         Crawl.createTable()
         RecordBase.createTable()
