@@ -25,7 +25,7 @@ class _Test(TestCase):
                             Column('password', String))
         self.engine = create_engine("sqlite:///test2.sqlite", echo=True)
         metadata.create_all(self.engine)
-        debug("message")
+        debug("metadata.create_all finished")
         from sqlalchemy.orm import mapper
         mapper(User, self.usersTable)
 
