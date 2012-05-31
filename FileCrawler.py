@@ -1,4 +1,4 @@
-from __future__ import unicode_literals, print_function
+from config import *
 from MyObject import MyObject, MyCrawl
 import os.path
 import json
@@ -144,20 +144,13 @@ class FileCrawler(Thread):
                                                           locale.format("%d", self.skipCount, grouping=True),
                                                           self.getFilesPerSecond())
 
-from unittest import TestCase
-from logging import getLogger, debug, DEBUG
 class _Test(TestCase):
     NUMBER_OF_FILES_TO_PROCESS_IN_ONE_TIME = None
-    ECHO_SQL_STATEMENT = False
     
     def setUp(self):
-        getLogger().setLevel(DEBUG)
-        engine = create_engine("sqlite:///test3.sqlite", echo=self.ECHO_SQL_STATEMENT)
         SessionClass = sessionmaker(bind=engine)
         self.session = SessionClass()
-        #MyObject.dropTable(engine)
         MyObject.createTable(engine)
-        #MyCrawl.dropTable(engine)
         MyCrawl.createTable(engine)
         
     
@@ -168,3 +161,6 @@ class _Test(TestCase):
             file_crawler.join(1)
             if not file_crawler.isAlive(): break
             print(file_crawler)
+
+if __name__ == "__main__":
+    main()
