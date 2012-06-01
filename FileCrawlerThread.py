@@ -153,13 +153,13 @@ class _Test(TestCase):
     
     def test1(self):
         session = Session()
-        file_crawler = FileCrawler("C://", session, max_files = 10)
+        file_crawler = FileCrawler("C://", session, max_files=10)
         file_crawler.start()
         count = 0
         while count < 3:
             file_crawler.join(1)
             if not file_crawler.isAlive(): break
-            print(file_crawler)
+            debug(file_crawler)
             count += 1
         file_crawler.join()
         session.close()
