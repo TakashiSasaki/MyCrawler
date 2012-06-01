@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 from sqlalchemy.exc import OperationalError
 
 class FileRecord(RecordBase):
-    __slots__ = ["created"]
+    __slots__ = ("created")
     
     def __repr__(self):
         return self.toJson()
@@ -23,6 +23,14 @@ class FileRecord(RecordBase):
             return True
         else:
             return False
+
+    def setCreated(self, created_datetime):
+        assert isinstance(created_datetime, datetime)
+        assert created_datetime.tzinfo is not None
+        self.created = created_datetime
+    
+    def getCreated(self):
+        return self.created
 
 
 def getLastFileInfo(agent_id, url, session):
@@ -50,12 +58,12 @@ class _Test(TestCase):
         session.add(crawl)
         session.commit()
         file_info = FileRecord()
-        file_info.crawlId = crawl.crawlId
-        file_info.url = "abc"
-        file_info.lastSeen = datetime.now()
+        file_info.setCrawlId(crawl.crawlId)
+        file_info.setUrl("file:///c:/example")
+        file_info.setLastSeen(utcnow())
         session.add(file_info)
         session.commit()
-        file_info_2 = getLastFileInfo(crawl.agentId, "abc", session)
+        file_info_2 = getLastFileInfo(crawl.agentId, "file:///c:/example", session)
         debug (file_info_2.crawlId)
         self.assertEqual(file_info_2.crawlId, crawl.crawlId)
         session.close()

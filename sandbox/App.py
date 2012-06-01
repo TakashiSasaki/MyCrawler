@@ -29,6 +29,6 @@ def MyApp2():
 
 import webbrowser
 if __name__ == "__main__":
-    from WsgiRunner import PasteThread
+    from lib.WsgiRunner import PasteThread
     PasteThread(MyApp(), 10523).start()
     webbrowser.open("http://localhost:10523/", autoraise=1)

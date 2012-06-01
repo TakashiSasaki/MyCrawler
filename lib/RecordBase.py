@@ -31,12 +31,13 @@ class RecordBase(DeclarativeBase):
         return self.uri
     def setUri(self, uri_):
         assert isinstance(uri_, str)
-        from urlparse import urlparse, ParseResult
-        parse_result = urlparse(uri_, allow_fragments=True)
-        assert isinstance(parse_result, ParseResult)
-        rebuilt_uri = parse_result.geturl()
-        if rebuilt_uri != uri_:
-            raise Exception("malformed URI " + uri_)
+        from urlparse import urlsplit, urlunsplit
+        split_uri = urlsplit(uri_, allow_fragments=True)
+        assert isinstance(split_uri, tuple)
+        unsplit_uri = urlunsplit(split_uri)
+        if unsplit_uri != uri_:
+            debug(unsplit_uri + " != " + uri_)
+            raise Exception("%s != %s " %(unsplit_uri ,uri_))
         self.uri = uri_
 
     url = Column(String(), index=True)
@@ -49,7 +50,7 @@ class RecordBase(DeclarativeBase):
         rebuilt_url = parse_result.geturl()
         if rebuilt_url != url_:
             raise Exception("malformed URL: " + url_)
-        if parse_result["scheme"] not in ("http", "file", "https", "ftp"):
+        if parse_result[0] not in ("http", "file", "https", "ftp", "file"):
             raise Exception("unacceptable scheme for URL: + " + parse_result["scheme"])
         self.url = url_
     
@@ -139,35 +140,37 @@ class MemoMap(DeclarativeBase):
         self.memoName = memo_name
     
 class _Test(TestCase):
+    __slots__ = ()
+    
     def setUp(self):
         #self.engine = create_engine("sqlite:///test3.sqlite", echo=True)
         DeclarativeBase.metadata.create_all(engine)
-
-        self.session = Session()
         
-    def test1(self):
-        self.session.add(MemoMap(2, "two"))
+    def testInsert(self):
+        session = Session()
+        session.add(MemoMap(2, "two"))
         try:
-            self.session.commit()
+            session.commit()
         except IntegrityError:
-            print ("the row already exists")
+            debug ("the row already exists")
+        session.close()
         
-    def test2(self):
+    def testUserIdentifier(self):
         crawl = Crawl("a@b")
         self.assertEqual(crawl.userName, "a", "malformed user name")
         self.assertEqual(crawl.userDomain, "b", "malformed user domain")
     
-    def test3(self):
+    def testInsert2(self):
         crawl = Crawl()
         crawl.begin()
         self.assertGreater(len(crawl.userName), 0, "no user name was given")
         self.assertGreater(len(crawl.userDomain), 0, "no user domain was given")
         crawl.end()
-        
-        self.session.add(crawl)
-        self.session.commit()
-        print (crawl.crawlId)
-    
+        session = Session()
+        session.add(crawl)
+        session.commit()
+        debug("crawlId of inserted record is %s" %(crawl.crawlId))
+        session.close()
         Crawl.dropTable()
 
 if __name__ == "__main__":

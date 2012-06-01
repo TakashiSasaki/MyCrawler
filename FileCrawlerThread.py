@@ -1,6 +1,6 @@
 from config import *
-from RecordBase import RecordBase
-from Crawl import Crawl
+from lib.RecordBase import RecordBase
+from lib.Crawl import Crawl
 import os.path
 import json
 import socket  
@@ -8,8 +8,9 @@ from datetime import datetime
 from hashlib import sha1
 from threading import Thread
 from time import sleep
-from FileInfo import FileRecord
+from lib.FileInfo import FileRecord
 import locale
+import dateutil
 
 EXCLUDE_DIRECTORIES = ["$Recycle.Bin"]
 
@@ -80,6 +81,8 @@ class _GitBlobHash(Thread):
         return self.readSize
 
 class FileCrawler(Thread):
+    __slots__=()
+    
     def __init__(self, path, sqlalchemy_session, max_files=None):
         Thread.__init__(self)
         self.skipCount = 0
@@ -96,27 +99,31 @@ class FileCrawler(Thread):
         for root, dirs, files in os.walk(self.path):
             if len(dirs) > 0 and dirs[0] in EXCLUDE_DIRECTORIES: dirs = dirs[1:]
             for f in files:
+                file_record = FileRecord()
                 path = root + os.path.sep + f
                 absolute_path = os.path.abspath(path)
                 url = "file://" + self.hostName + "/" + absolute_path
-                file_info = FileRecord()
-                file_info.url = url
-                file_info.crawlId = self.crawl.crawlId
-                if file_info.exists(self.crawl.agentId, self.sqlAlchemySession, BEST_BEFORE_PERIOD_IN_SECOND):
+                file_record.setUrl(url)
+                file_record.setCrawlId(self.crawl.crawlId)
+                if file_record.exists(self.crawl.agentId, self.sqlAlchemySession, BEST_BEFORE_PERIOD_IN_SECOND):
                     self.skipCount += 1
                     continue
                 stat = os.stat(path)
                 git_blob_hash = _GitBlobHash(path, stat)
                 git_blob_hash.start()
-                file_info.size = stat.st_size
-                file_info.created = datetime.fromtimestamp(stat.st_ctime)
-                file_info.lastModified = datetime.fromtimestamp(stat.st_mtime) # naive or aware?
-                file_info.lastSeen = datetime.now()
+                file_record.setSize(stat.st_size)
+                created_datetime = datetime.fromtimestamp(stat.st_ctime)
+                created_datetime = created_datetime.replace(tzinfo=dateutil.tz.tzlocal())
+                file_record.setCreated(created_datetime)
+                last_modified_datetime = datetime.fromtimestamp(stat.st_mtime)
+                last_modified_datetime = last_modified_datetime.replace(tzinfo=dateutil.tz.tzlocal())
+                file_record.setLastModified(last_modified_datetime) # naive or aware?
+                file_record.setLastSeen(utcnow())
                 git_blob_hash.join()
                 hash_string = git_blob_hash.getGitBlobHash()
                 if hash_string is not None:
-                    file_info.uri = "git:blob:" + hash_string
-                self.sqlAlchemySession.add(file_info)
+                    file_record.setUri("git:blob:" + hash_string)
+                self.sqlAlchemySession.add(file_record)
                 self.crawl.increment(git_blob_hash.getReadSize())
             if self.maxFiles and  self.crawl.getNumberOfProcessedItems() >= self.maxFiles: break 
         self.crawl.end()
