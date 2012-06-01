@@ -66,6 +66,11 @@ class Crawl(DeclarativeBase):
     
     def end(self):
         self.endDateTime = datetime.now()
+    
+    @classmethod
+    def exists(cls):
+        table = DeclarativeBase.metadata.tables[cls.__tablename__]
+        return table.exists(engine)
         
     @classmethod
     def dropTable(cls):
@@ -111,8 +116,11 @@ class Crawl(DeclarativeBase):
 class _Test(TestCase):
     def setUp(self):
         #DeclarativeBase.metadata.create_all(engine)
-        Crawl.dropTable()
+        if Crawl.exists():
+            Crawl.dropTable()
+        self.assertFalse(Crawl.exists(), "Crawl table should be deleted at the start of tests.")
         Crawl.createTable()
+        self.assertTrue(Crawl.exists(), "Crawl table does not exists.")
         self.session = Session()
     
     def testAutoIncrement(self):

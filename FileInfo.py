@@ -42,21 +42,23 @@ class _Test(TestCase):
         RecordBase.dropTable()
         Crawl.createTable()
         RecordBase.createTable()
-        self.session = Session()
+        #self.session = Session()
     
     def test(self):
+        session = Session()
         crawl = Crawl()
-        self.session.add(crawl)
-        self.session.commit()
+        session.add(crawl)
+        session.commit()
         file_info = FileRecord()
         file_info.crawlId = crawl.crawlId
         file_info.url = "abc"
         file_info.lastSeen = datetime.now()
-        self.session.add(file_info)
-        self.session.commit()
-        file_info_2 = getLastFileInfo(crawl.agentId, "abc", self.session)
-        print (file_info_2.crawlId)
+        session.add(file_info)
+        session.commit()
+        file_info_2 = getLastFileInfo(crawl.agentId, "abc", session)
+        debug (file_info_2.crawlId)
         self.assertEqual(file_info_2.crawlId, crawl.crawlId)
-
+        session.close()
+        
 if __name__ == "__main__":
     main()

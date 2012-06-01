@@ -121,6 +121,7 @@ class FileCrawler(Thread):
             if self.maxFiles and  self.crawl.getNumberOfProcessedItems() >= self.maxFiles: break 
         self.crawl.end()
         self.sqlAlchemySession.commit()
+        self.sqlAlchemySession.close()
     
     def getNumberOfProcessedFiles(self):
         return self.crawl.getNumberOfProcessedItems()
@@ -146,13 +147,13 @@ class FileCrawler(Thread):
 class _Test(TestCase):
     
     def setUp(self):
-        self.session = Session()
         RecordBase.createTable()
         Crawl.createTable()
         
     
     def test1(self):
-        file_crawler = FileCrawler("C://", self.session, max_files = 10)
+        session = Session()
+        file_crawler = FileCrawler("C://", session, max_files = 10)
         file_crawler.start()
         count = 0
         while count < 3:
@@ -160,6 +161,8 @@ class _Test(TestCase):
             if not file_crawler.isAlive(): break
             print(file_crawler)
             count += 1
+        file_crawler.join()
+        session.close()
 
 if __name__ == "__main__":
     main()
