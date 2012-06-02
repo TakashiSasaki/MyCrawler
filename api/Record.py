@@ -2,17 +2,31 @@ from config import *
 from gviz_api import DataTable
 from webapp2 import RequestHandler, WSGIApplication
 from paste.request import path_info_pop
+from lib.RecordBase import RecordBase
+from sqlalchemy.exc import OperationalError
 
 class _RecordHandler(RequestHandler):
     def get(self):
         self.response.out.write(self.request.path_info)
-        pass
+        if self.request.path_info == "":
+            session = Session()
+            try:
+                data_table = RecordBase.getGvizDataTable(session)
+                session.close()
+            except OperationalError, e:
+                self.response.set_status(404)
+                self.response.out.write(e.message)
+                return
+            self.response.out.write(data_table.ToJSonResponse())
+        
+        
 
 class RecordApp(WSGIApplication):
     def __init__(self):
-        WSGIApplication.__init__(self, [("/Record/?.*", _RecordHandler)])
+        WSGIApplication.__init__(self, [("/api/Record/?.*", _RecordHandler)])
         
     def __call__(self, environ, start_response):
+        path_info_pop(environ)
         path_info_pop(environ)
         #info("PATH_INFO = " + environ["PATH_INFO"]) 
         return WSGIApplication.__call__(self, environ, start_response)

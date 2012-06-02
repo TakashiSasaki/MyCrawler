@@ -1,6 +1,6 @@
 from __future__ import  print_function, unicode_literals
 import logging as _logging
-_logging.basicConfig(level=_logging.DEBUG)
+_logging.basicConfig(level=_logging.INFO)
 from logging import debug, info, warn, error, critical, exception
 from unittest import TestCase, main
 from sqlalchemy import create_engine as _create_engine
