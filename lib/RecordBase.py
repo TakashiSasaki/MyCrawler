@@ -3,10 +3,12 @@ from config import *
 from sqlalchemy import Column, String, Integer, DateTime, Boolean, ForeignKey
 from sqlalchemy.orm import relation
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy.orm.query import Query
 from datetime import datetime, timedelta
 #from MyCrawlTable import MyCrawlTable
 #from MyCrawl import MyCrawl
 from Crawl import Crawl
+from gviz_api import DataTable
 
 class RecordBase(DeclarativeBase):
     __tablename__ = "Record"
@@ -171,7 +173,20 @@ class RecordBase(DeclarativeBase):
         gviz_data = []
         for x,y in self.gvizSchema:
             gviz_data.append(getattr(self, x))
-        return gviz_data            
+        return gviz_data  
+    
+    @classmethod
+    def getGvizDataTable(cls, session):
+        query = session.query(cls)
+        assert isinstance(query, Query)
+        data_table = DataTable(cls.getGvizSchema())
+        for x in query.all():
+            assert isinstance(x, RecordBase)
+            gviz_data = x.getGvizData()
+            assert isinstance(gviz_data, list)
+            data_table.AppendData([gviz_data])
+        return data_table
+        
 
 class MemoMap(DeclarativeBase):
     __tablename__ = "MemoMap"
@@ -219,7 +234,17 @@ class _Test(TestCase):
         info(RecordBase.getGvizSchema())
         record_base = RecordBase()
         record_base.setUrl("http://example.com/")
-        info(record_base.getGvizData())
+        session = Session()
+        session.add(record_base)
+        session.commit()
+        data_table = record_base.getGvizDataTable(session)
+        session.close()
+        info(data_table.ToJSCode("x"))
+        info(data_table.ToCsv())
+        info(data_table.ToHtml())
+        info(data_table.ToJSon())
+        info(data_table.ToJSonResponse())
+        info(data_table.ToResponse())
 
 if __name__ == "__main__":
     main()
