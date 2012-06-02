@@ -35,6 +35,11 @@ class _Test(TestCase):
     def test(self):
         app = CrawlApp()
     
+    def test2(self):
+        session = Session()
+        info(Crawl.getGvizDataTable(session))
+        session.close()
+    
     def tearDown(self):
         TestCase.tearDown(self)
         
