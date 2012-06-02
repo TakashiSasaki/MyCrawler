@@ -1,23 +1,29 @@
 from config import *
 from sqlalchemy import Column, String, Integer, DateTime
-#from sqlalchemy.orm import relation
-#from sqlalchemy.orm.session import sessionmaker
-#from sqlalchemy.exc import IntegrityError
 from datetime import datetime, timedelta
-#from sqlalchemy import create_engine
+from DeclarativeBase import DeclarativeBase
+from lib.GvizDataTableMixin import GvizDataTableMixin
 
 
-
-class Crawl(DeclarativeBase):
+class Crawl(DeclarativeBase, GvizDataTableMixin):
     __tablename__ = "Crawl"
     __table_args__ = {'sqlite_autoincrement': True}
+    
+    
     crawlId = Column(Integer(), primary_key=True)
+    
     agentId = Column(Integer(), nullable=False, index=True) #MAC address can be used
+    
     beginDateTime = Column(DateTime(), nullable=True)
+    
     endDateTime = Column(DateTime(), nullable=True)
+    
     userName = Column(String(), nullable=False)
+    
     userDomain = Column(String(), nullable=False)
+    
     nProcessedItems = Column(Integer(), nullable=False)
+    
     nProcessedBytes = Column(Integer(), nullable=False)
     
     def __init__(self, email_style_user_identifier=None):
@@ -66,31 +72,7 @@ class Crawl(DeclarativeBase):
     
     def end(self):
         self.endDateTime = datetime.now()
-    
-    @classmethod
-    def exists(cls):
-        table = DeclarativeBase.metadata.tables[cls.__tablename__]
-        return table.exists(engine)
-        
-    @classmethod
-    def dropTable(cls):
-        try:
-            table = DeclarativeBase.metadata.tables[cls.__tablename__]
-            debug("dropping table " + str(table))
-            table.drop(engine, checkfirst=True)
-        except Exception, e:
-            exception(e.message)
-            raise e
-        
-    @classmethod
-    def createTable(cls):
-        try:
-            table = DeclarativeBase.metadata.tables[cls.__tablename__]
-            table.create(engine, checkfirst=True)
-        except Exception, e:
-            exception(e.message)
-            raise e
-        
+
     def increment(self, processed_bytes):
         self.nProcessedBytes += processed_bytes
         self.nProcessedItems += 1
@@ -121,15 +103,36 @@ class _Test(TestCase):
         self.assertFalse(Crawl.exists(), "Crawl table should be deleted at the start of tests.")
         Crawl.createTable()
         self.assertTrue(Crawl.exists(), "Crawl table does not exists.")
-        self.session = Session()
     
     def testAutoIncrement(self):
+        session = Session()
         my_crawl_1 = Crawl()
-        self.session.add(my_crawl_1)
+        session.add(my_crawl_1)
         my_crawl_2 = Crawl()
-        self.session.add(my_crawl_2)
-        self.session.commit()
+        session.add(my_crawl_2)
+        session.commit()
         self.assertEqual(my_crawl_1.crawlId + 1, my_crawl_2.crawlId)
+        session.close()
+    
+    def testGvizSchema(self):
+        debug("testGvizSchema")
+        debug(Crawl.getGvizSchema())
+    
+    def testGvizData(self):
+        debug("testGvizData")
+        crawl = Crawl()
+        debug(crawl.getGvizData())
+
+    def testGvizDataTable(self):
+        debug("testGvizDataTable")
+        session = Session()
+        crawl = Crawl()
+        session.add(crawl)
+        session.commit()
+        session.close()
+        session = Session()
+        debug(Crawl.getGvizDataTable(session).ToJSon())
+        session.close()
 
 if __name__ == "__main__":
     main()

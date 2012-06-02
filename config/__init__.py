@@ -8,10 +8,7 @@ engine = _create_engine("sqlite:///test3.sqlite", echo=False)
 from sqlalchemy.orm.session import sessionmaker as _sessionmaker
 Session = _sessionmaker(bind=engine, autocommit=False)
 PersistentSession = _sessionmaker(bind=engine, autocommit=True)
-from sqlalchemy import  MetaData as _MetaData
-from sqlalchemy.ext.declarative import declarative_base as _declarative_base
 #_metadata = MetaData()
-DeclarativeBase = _declarative_base(metadata=_MetaData())
 from datetime import datetime as _datetime
 from dateutil.tz import tzutc
 def utcnow():
