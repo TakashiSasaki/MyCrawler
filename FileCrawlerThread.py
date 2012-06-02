@@ -1,14 +1,12 @@
 from config import *
 from lib.Record import Record
 from lib.Crawl import Crawl
-import os.path
-import json
-import socket  
+import os.path, socket
 from datetime import datetime
 from hashlib import sha1
 from threading import Thread
 from time import sleep
-from lib.FileInfo import FileRecord
+from lib.FileRecord import FileRecord
 import locale
 import dateutil
 
