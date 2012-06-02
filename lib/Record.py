@@ -10,7 +10,7 @@ from Crawl import Crawl
 from lib.GvizDataTableMixin import GvizDataTableMixin
 from lib.DeclarativeBase import DeclarativeBase
 
-class RecordBase(DeclarativeBase, GvizDataTableMixin):
+class Record(DeclarativeBase, GvizDataTableMixin):
     __tablename__ = "Record"
     __table_args__ = {'sqlite_autoincrement': True}
     
@@ -187,13 +187,13 @@ class _Test(TestCase):
         Crawl.dropTable()
         
     def testGviz(self):
-        info(RecordBase.getGvizSchema())
-        record_base = RecordBase()
-        record_base.setUrl("http://example.com/")
+        info(Record.getGvizSchema())
+        record = Record()
+        record.setUrl("http://example.com/")
         session = Session()
-        session.add(record_base)
+        session.add(record)
         session.commit()
-        data_table = record_base.getGvizDataTable(session)
+        data_table = record.getGvizDataTable(session)
         session.close()
         debug(data_table.ToJSCode("x"))
         debug(data_table.ToCsv())

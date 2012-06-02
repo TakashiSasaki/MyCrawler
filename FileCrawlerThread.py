@@ -1,5 +1,5 @@
 from config import *
-from lib.RecordBase import RecordBase
+from lib.Record import Record
 from lib.Crawl import Crawl
 import os.path
 import json
@@ -154,7 +154,7 @@ class FileCrawler(Thread):
 class _Test(TestCase):
     
     def setUp(self):
-        RecordBase.createTable()
+        Record.createTable()
         Crawl.createTable()
         
     

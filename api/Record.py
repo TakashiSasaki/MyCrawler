@@ -1,7 +1,7 @@
 from config import *
 from webapp2 import RequestHandler, WSGIApplication
 from paste.request import path_info_pop
-from lib.RecordBase import RecordBase
+from lib.Record import Record
 from sqlalchemy.exc import OperationalError
 
 class _RecordHandler(RequestHandler):
@@ -10,7 +10,7 @@ class _RecordHandler(RequestHandler):
         if self.request.path_info == "":
             session = Session()
             try:
-                data_table = RecordBase.getGvizDataTable(session)
+                data_table = Record.getGvizDataTable(session)
                 session.close()
             except OperationalError, e:
                 self.response.set_status(404)
