@@ -16,9 +16,9 @@ class _EnvironmentApp(WSGIApplication):
 
 if __name__ == "__main__":
     from paste.urlparser import StaticURLParser
-    html_app = StaticURLParser("html/")
-    css_app = StaticURLParser("css/", "css/")
-    js_app = StaticURLParser("js/", "js/")
+    html_app = StaticURLParser("html")
+    css_app = StaticURLParser("css")
+    js_app = StaticURLParser("js")
     
     from paste.cascade import Cascade
     cascaded_app = Cascade([html_app, css_app, js_app, _EnvironmentApp()])
