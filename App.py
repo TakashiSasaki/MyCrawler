@@ -26,4 +26,4 @@ if __name__ == "__main__":
     PasteThread(cascaded_app, 10523, timeout=30).start()
 
     import webbrowser
-    webbrowser.open("http://localhost:10523/basic-page-template.html", autoraise=1)
+    webbrowser.open("http://localhost:10523/", autoraise=1)
