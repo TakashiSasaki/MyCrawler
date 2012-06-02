@@ -195,12 +195,12 @@ class _Test(TestCase):
         session.commit()
         data_table = record_base.getGvizDataTable(session)
         session.close()
-        info(data_table.ToJSCode("x"))
-        info(data_table.ToCsv())
-        info(data_table.ToHtml())
-        info(data_table.ToJSon())
-        info(data_table.ToJSonResponse())
-        info(data_table.ToResponse())
+        debug(data_table.ToJSCode("x"))
+        debug(data_table.ToCsv())
+        debug(data_table.ToHtml())
+        debug(data_table.ToJSon())
+        debug(data_table.ToJSonResponse())
+        debug(data_table.ToResponse())
 
 if __name__ == "__main__":
     main()

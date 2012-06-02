@@ -1,5 +1,4 @@
 from config import *
-from gviz_api import DataTable
 from webapp2 import RequestHandler, WSGIApplication
 from paste.request import path_info_pop
 from lib.RecordBase import RecordBase
@@ -18,8 +17,6 @@ class _RecordHandler(RequestHandler):
                 self.response.out.write(e.message)
                 return
             self.response.out.write(data_table.ToJSonResponse())
-        
-        
 
 class RecordApp(WSGIApplication):
     def __init__(self):

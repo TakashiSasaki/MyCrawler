@@ -100,12 +100,10 @@ class GvizDataTableMixin(object):
     @classmethod
     def getGvizDataTable(cls, session):
         assert isclass(cls)
-        #info(cls)
         query = session.query(cls)
         assert isinstance(query, Query)
         data_table = DataTable(cls.getGvizSchema())
         for x in query.all():
-            #assert isinstance(x, RecordBase)
             gviz_data = x.getGvizData()
             assert isinstance(gviz_data, list)
             data_table.AppendData([gviz_data])

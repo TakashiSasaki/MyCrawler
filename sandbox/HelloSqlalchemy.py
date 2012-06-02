@@ -31,8 +31,8 @@ class _Test(TestCase):
 
     def testAddRecord(self):
         ed_user = User('ed', "Ed Jones", "edpassword")
-        print (ed_user.fullname)
-        print (ed_user.password)
+        debug (ed_user.fullname)
+        debug (ed_user.password)
         
         Session = sessionmaker(bind=self.engine)
         session = Session()
