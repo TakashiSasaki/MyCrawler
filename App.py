@@ -1,6 +1,6 @@
 from config import *
 from webapp2 import RequestHandler, WSGIApplication
-from wsgiref.simple_server import demo_app
+#from wsgiref.simple_server import demo_app
 
 
 class _EnvironmentApp(WSGIApplication):
@@ -12,7 +12,7 @@ class _EnvironmentApp(WSGIApplication):
     def __init__(self):
         WSGIApplication.__init__(self, [("/Environment", _EnvironmentApp._EnvironmentHandler),
                                         ("/environment", _EnvironmentApp._EnvironmentHandler)],
-                                 debug=True, config=None)
+                                 debug=False, config=None)
 
 if __name__ == "__main__":
     from paste.urlparser import StaticURLParser

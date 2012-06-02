@@ -1,26 +1,49 @@
-<!DOCTYPE html> 
-<html> 
+<!DOCTYPE html>
+<html>
 	<!-- This page comes from http://jquerymobile.com/demos/1.1.0/docs/about/getting-started.html -->
-	<head> 
-	<title>MyCrawler</title> 
-	<meta name="viewport" content="width=device-width, initial-scale=1"> 
-	<link rel="stylesheet" href="jquery.mobile-1.1.0.min.css" />
-	<script src="jquery-1.7.1.min.js"></script>
-	<script src="jquery.mobile-1.1.0.min.js"></script>
-</head> 
-<body> 
+	<head>
+		<title>MyCrawler</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="stylesheet" href="jquery.mobile-1.1.0.min.css" />
+		<script src="jquery-1.7.1.min.js"></script>
+		<script src="jquery.mobile-1.1.0.min.js"></script>
+	</head>
+	<body>
+		<script type="text/javascript"
+		src='https://www.google.com/jsapi?autoload={
+		"modules":[{"name":"visualization","version":"1"}]
+		}'></script>
+		<script type="text/javascript">
+			google.setOnLoadCallback(drawVisualization);
 
-<div data-role="page">
+			function drawVisualization() {
+				// Define the chart using setters:
+				var wrap = new google.visualization.ChartWrapper();
+				wrap.setChartType('LineChart');
+				wrap.setDataSourceUrl('http://spreadsheets.google.com/tq?key=pCQbetd-CptGXxxQIG7VFIQ&pub=1');
+				wrap.setContainerId('visualization');
+				wrap.setQuery('SELECT A,D WHERE D > 100 ORDER BY D');
+				wrap.setOptions({
+					'title' : 'Population Density (people/km^2)',
+					'legend' : 'none'
+				});
+				wrap.draw();
+			}
+		</script>
+		<div data-role="page">
 
-	<div data-role="header">
-		<h1>My Crawler</h1>
-	</div><!-- /header -->
+			<div data-role="header">
+				<h1>My Crawler</h1>
+			</div><!-- /header -->
 
-	<div data-role="content">	
-		<p>Hello my crawler</p>		
-	</div><!-- /content -->
+			<div data-role="content">
+				<p>
+					Hello my crawler
+				</p>
+				<div id="visualization"></div>
+			</div><!-- /content -->
 
-</div><!-- /page -->
+		</div><!-- /page -->
 
-</body>
+	</body>
 </html>
