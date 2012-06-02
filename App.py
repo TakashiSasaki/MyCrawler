@@ -13,6 +13,8 @@ class _EnvironmentApp(WSGIApplication):
         WSGIApplication.__init__(self, [("/Environment", _EnvironmentApp._EnvironmentHandler),
                                         ("/environment", _EnvironmentApp._EnvironmentHandler)],
                                  debug=False, config=None)
+        
+from api.Record import RecordApp
 
 if __name__ == "__main__":
     from paste.urlparser import StaticURLParser
@@ -21,9 +23,9 @@ if __name__ == "__main__":
     js_app = StaticURLParser("js")
     
     from paste.cascade import Cascade
-    cascaded_app = Cascade([html_app, css_app, js_app, _EnvironmentApp()])
+    cascaded_app = Cascade([html_app, css_app, js_app, _EnvironmentApp(), RecordApp()])
     from lib.WsgiRunner import PasteThread
     PasteThread(cascaded_app, 10523, timeout=30).start()
 
     import webbrowser
-    webbrowser.open("http://localhost:10523/", autoraise=1)
+    webbrowser.open("http://localhost:10523/Record", autoraise=1)
