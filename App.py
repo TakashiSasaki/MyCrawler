@@ -17,13 +17,13 @@ class _EnvironmentApp(WSGIApplication):
 if __name__ == "__main__":
     from paste.urlparser import StaticURLParser
     html_app = StaticURLParser("html/")
-    css_app = StaticURLParser("css/")
-    js_app = StaticURLParser("js/")
+    css_app = StaticURLParser("css/", "css/")
+    js_app = StaticURLParser("js/", "js/")
     
     from paste.cascade import Cascade
-    cascaded_app = Cascade([html_app, css_app, js_app, _EnvironmentApp(), demo_app])
+    cascaded_app = Cascade([html_app, css_app, js_app, _EnvironmentApp()])
     from lib.WsgiRunner import PasteThread
-    PasteThread(cascaded_app, 10523).start()
+    PasteThread(cascaded_app, 10523, timeout=30).start()
 
     import webbrowser
-    webbrowser.open("http://localhost:10523/environment", autoraise=1)
+    webbrowser.open("http://localhost:10523/basic-page-template.html", autoraise=1)

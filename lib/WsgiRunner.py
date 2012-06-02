@@ -20,7 +20,7 @@ class WsgirefThread(Thread):
         httpd.serve_forever()
 
 class _Watchdog(object):
-    def __init__(self, server, limit = 5):
+    def __init__(self, server, limit=5):
         from paste.httpserver import WSGIThreadPoolServer
         assert isinstance(server, WSGIThreadPoolServer)
         self.server = server
@@ -36,11 +36,11 @@ class _Watchdog(object):
             n_zombie = len(threads_state["zombie"])
             debug("count=%d busy=%d hung=%d dying=%d zombie=%d" % (self.count, n_busy, n_hung, n_dying, n_zombie))
             n_not_idle = n_busy + n_dying + n_zombie
-            if n_not_idle >0: 
+            if n_not_idle > 0: 
                 self.pat()
                 return
             self.count += 1
-            if self.limit  < self.count:
+            if self.limit < self.count:
                 info("server will be shut down")
                 self.server.server_close()
         return timeout_handler
@@ -51,7 +51,8 @@ class _Watchdog(object):
         
 class PasteThread(Thread):
     """paste.httpserve is a WSGI application runner. """
-    def __init__(self, app, port):
+    def __init__(self, app, port, timeout=5):
+        self.timeout = timeout
         Thread.__init__(self)
         self.app = app
         self.port = port
@@ -74,7 +75,7 @@ class PasteThread(Thread):
             warn("server.timeout was changed from %d to 1" % (server.timeout))
             server.timeout = 1
         assert server.timeout == 1
-        server.handle_timeout = _Watchdog(server).getTimeoutHandler()
+        server.handle_timeout = _Watchdog(server, limit=self.timeout).getTimeoutHandler()
         server.serve_forever()
         info("server_forever finished")
 
