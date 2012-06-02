@@ -122,7 +122,7 @@ class FileCrawler(Thread):
                 git_blob_hash.join()
                 hash_string = git_blob_hash.getGitBlobHash()
                 if hash_string is not None:
-                    file_record.setUri("git:blob:" + hash_string)
+                    file_record.setUri("git:///blob/" + hash_string)
                 self.sqlAlchemySession.add(file_record)
                 self.crawl.increment(git_blob_hash.getReadSize())
             if self.maxFiles and  self.crawl.getNumberOfProcessedItems() >= self.maxFiles: break 
