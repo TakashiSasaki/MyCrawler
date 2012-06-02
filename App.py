@@ -25,8 +25,14 @@ if __name__ == "__main__":
     
     from paste.cascade import Cascade
     cascaded_app = Cascade([html_app, css_app, js_app, _EnvironmentApp(), RecordApp(), CrawlApp()])
-    from lib.WsgiRunner import PasteThread
-    PasteThread(cascaded_app, 10523, timeout=10).start()
-
+    while True:
+        from lib.WsgiRunner import PasteThread
+        paste_thread = PasteThread(cascaded_app, 10523, timeout=10)
+        info("starting PasteThread")
+        paste_thread.start()
+        info("waiting for PasteThread to stop")
+        paste_thread.join()
+        info("restarting PasteThread")
+        
     import webbrowser
     webbrowser.open("http://localhost:10523/Record.html", autoraise=1)
