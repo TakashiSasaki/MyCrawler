@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Crawl</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="stylesheet" href="jquery.mobile-1.1.0.min.css" />
+		<script src="jquery-1.7.1.min.js"></script>
+		<script src="jquery.mobile-1.1.0.min.js"></script>
+	</head>
+	<body>
+		<script type="text/javascript"
+		src='https://www.google.com/jsapi?autoload={
+		"modules":[{"name":"visualization","version":"1"}]
+		}'></script>
+		<script type="text/javascript">
+			google.setOnLoadCallback(drawTable);
+
+			function drawTable() {
+				var wrap = new google.visualization.ChartWrapper();
+				wrap.setChartType('Table');
+				wrap.setDataSourceUrl('/api/Crawl');
+				wrap.setContainerId('table');
+				wrap.draw();
+			}//drawTable
+		</script>
+
+		<div data-role="page">
+
+			<div data-role="header">
+				<h1>Crawl</h1>
+			</div><!-- /header -->
+
+			<div data-role="content">
+				<div id="table"></div>
+			</div><!-- /content -->
+
+		</div><!-- /page -->
+
+	</body>
+</html>

@@ -15,6 +15,7 @@ class _EnvironmentApp(WSGIApplication):
                                  debug=False, config=None)
         
 from api.Record import RecordApp
+from api.Crawl import CrawlApp
 
 if __name__ == "__main__":
     from paste.urlparser import StaticURLParser
@@ -23,7 +24,7 @@ if __name__ == "__main__":
     js_app = StaticURLParser("js")
     
     from paste.cascade import Cascade
-    cascaded_app = Cascade([html_app, css_app, js_app, _EnvironmentApp(), RecordApp()])
+    cascaded_app = Cascade([html_app, css_app, js_app, _EnvironmentApp(), RecordApp(), CrawlApp()])
     from lib.WsgiRunner import PasteThread
     PasteThread(cascaded_app, 10523, timeout=10).start()
 
