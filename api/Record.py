@@ -33,7 +33,7 @@ class _Test(TestCase):
         TestCase.setUp(self)
 
     def test(self):
-        pass
+        record_app = RecordApp()
     
     def tearDown(self):
         TestCase.tearDown(self)

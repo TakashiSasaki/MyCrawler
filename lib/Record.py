@@ -187,7 +187,7 @@ class _Test(TestCase):
         Crawl.dropTable()
         
     def testGviz(self):
-        info(Record.getGvizSchema())
+        debug(Record.getGvizSchema())
         record = Record()
         record.setUrl("http://example.com/")
         session = Session()

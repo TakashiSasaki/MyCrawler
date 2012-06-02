@@ -1,13 +1,11 @@
 from config import *
 from lib.Record import Record
 from lib.Crawl import Crawl
-import os.path, socket
+import os.path, socket, locale
 from datetime import datetime
 from hashlib import sha1
 from threading import Thread
-from time import sleep
 from lib.FileRecord import FileRecord
-import locale
 import dateutil
 
 EXCLUDE_DIRECTORIES = ["$Recycle.Bin"]

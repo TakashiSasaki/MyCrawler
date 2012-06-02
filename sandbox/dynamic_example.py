@@ -30,10 +30,24 @@ data = [{"name": "Mike", "salary": (10000, "$10,000"), "full_time": True},
 
 data_table = gviz_api.DataTable(description)
 data_table.LoadData(data)
-print "Content-type: text/plain"
-print
-print data_table.ToJSonResponse(columns_order=("name", "salary", "full_time"),
-                                order_by="salary")
 
 # Put the url (http://google-visualization.appspot.com/python/dynamic_example)
 # as your Google Visualization data source.
+
+from unittest import TestCase
+from config import main
+import logging
+info = logging.getLogger(__name__).info
+debug = logging.getLogger(__name__).debug
+class _Test(TestCase):
+    def test(self):
+        debug("Content-type: text/plain")
+        debug("")
+        debug(data_table.ToJSonResponse(columns_order=("name", "salary", "full_time"),order_by="salary"))
+    
+    def test2(self):
+        debug("__name__ = %s" %__name__)
+
+if __name__ == "__main__":
+    debug("dir() = %s"%dir())
+    main()
