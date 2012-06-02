@@ -12,13 +12,17 @@ class RecordBase(DeclarativeBase):
     __tablename__ = "Record"
     __table_args__ = {'sqlite_autoincrement': True}
     
+    gvizSchema = [] # for Google Visualization API
+
     objectId = Column(Integer, primary_key=True) #unique only on this database
+    gvizSchema.append(("objectId", "number"))
     def getObjectId(self):
         """objectId is the primary key and automatically set"""
         return self.objectId
     
     crawlId = Column(Integer, ForeignKey('Crawl.crawlId'), index=True) #identical for one session
     myCrawlTable = relation(Crawl)
+    gvizSchema.append(("crawlId", "number"))
     def getCrawlId(self):
         """crawlId is given for one crawl and is a foreign key of MyCrawl table."""
         return self.crawlId
@@ -27,6 +31,7 @@ class RecordBase(DeclarativeBase):
         self.crawlId = crawl_id
     
     uri = Column(String())
+    gvizSchema.append(("uri", "string"))
     def getUri(self):
         return self.uri
     def setUri(self, uri_):
@@ -41,6 +46,7 @@ class RecordBase(DeclarativeBase):
         self.uri = uri_
 
     url = Column(String(), index=True)
+    gvizSchema.append(("url", "string"))
     def getUrl(self):
         return self.url
     def setUrl(self, url_):
@@ -55,6 +61,7 @@ class RecordBase(DeclarativeBase):
         self.url = url_
     
     size = Column(Integer(), nullable=True)
+    gvizSchema.append(("size", "number"))
     def getSize(self):
         return self.getSize()
     def setSize(self, size_):
@@ -62,6 +69,7 @@ class RecordBase(DeclarativeBase):
         self.size = size_
 
     lastModified = Column(DateTime()) #last modified datetime
+    gvizSchema.append(("lastModified","datetime"))
     def getLastModified(self):
         return self.lastModified
     def setLastModified(self, last_modified):
@@ -70,6 +78,7 @@ class RecordBase(DeclarativeBase):
         self.lastModified = last_modified
     
     lastSeen = Column(DateTime(), index=True) #last seen datetime
+    gvizSchema.append(("lastSeen","datetime"))
     def getLastSeen(self):
         return self.lastSeen
     def setLastSeen(self, last_seen):
@@ -78,6 +87,7 @@ class RecordBase(DeclarativeBase):
         self.lastSeen = last_seen
     
     jsonString = Column(String()) #serialized data
+    gvizSchema.append(("jsonString","string"))
     def getJsonString(self):
         return self.jsonString
     def setJsonString(self, json_string):
@@ -87,29 +97,50 @@ class RecordBase(DeclarativeBase):
         self.jsonString = dumps(x)
     
     belongsTo = Column(Integer())
+    gvizSchema.append(("belongsTo","number"))
     def getBelongsTo(self):
         return self.belongsTo
     def setBelongsTo(self, belongs_to):
         assert isinstance(belongs_to, int)
         self.belongsTo = belongs_to 
         
-    completed = Column(Boolean())
-    def getCompleted(self):
+    exhaustive = Column(Boolean())
+    gvizSchema.append(("exhaustive","boolean"))
+    def getExhaustive(self):
         return self.getCompleted()
-    def setCompleted(self, is_completed):
+    def setExhaustive(self, is_completed):
         assert isinstance(is_completed, bool)
         self.completed = is_completed
     
     memo0 = Column(String(), nullable=True)
+    gvizSchema.append(("memo0","string"))
+
     memo1 = Column(String(), nullable=True)
+    gvizSchema.append(("memo1","string"))
+
     memo2 = Column(String(), nullable=True)
+    gvizSchema.append(("memo2","string"))
+
     memo3 = Column(String(), nullable=True)
+    gvizSchema.append(("memo3","string"))
+
     memo4 = Column(String(), nullable=True)
+    gvizSchema.append(("memo4","string"))
+
     memo5 = Column(String(), nullable=True)
+    gvizSchema.append(("memo5","string"))
+
     memo6 = Column(String(), nullable=True)
+    gvizSchema.append(("memo6","string"))
+
     memo7 = Column(String(), nullable=True)
+    gvizSchema.append(("memo7","string"))
+
     memo8 = Column(String(), nullable=True)
+    gvizSchema.append(("memo8","string"))
+
     memo9 = Column(String(), nullable=True)
+    gvizSchema.append(("memo9","string"))
 
     def __str__(self):
         s = "<MyObject(%s,%s,%s,%s,%s)>" % (self.url, self.size, self.lastModified, self.lastSeen, self.uri)
@@ -130,6 +161,17 @@ class RecordBase(DeclarativeBase):
             table.create(engine, checkfirst=True)
         except:
             pass
+    
+    
+    @classmethod
+    def getGvizSchema(cls):
+        return cls.gvizSchema
+
+    def getGvizData(self):
+        gviz_data = []
+        for x,y in self.gvizSchema:
+            gviz_data.append(getattr(self, x))
+        return gviz_data            
 
 class MemoMap(DeclarativeBase):
     __tablename__ = "MemoMap"
@@ -172,6 +214,12 @@ class _Test(TestCase):
         debug("crawlId of inserted record is %s" %(crawl.crawlId))
         session.close()
         Crawl.dropTable()
+        
+    def testGviz(self):
+        info(RecordBase.getGvizSchema())
+        record_base = RecordBase()
+        record_base.setUrl("http://example.com/")
+        info(record_base.getGvizData())
 
 if __name__ == "__main__":
     main()
