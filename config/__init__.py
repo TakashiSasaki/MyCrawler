@@ -1,7 +1,39 @@
 from __future__ import  print_function, unicode_literals
+import inspect as _inspect
+
+def _getNameInPreviousFrame():
+    current_frame = _inspect.currentframe(2)
+    name = current_frame.f_globals["__name__"]
+    return name
+
 import logging as _logging
 _logging.basicConfig(level=_logging.INFO)
-from logging import debug, info, warn, error, critical, exception
+
+def debug(message):
+    logger = _logging.getLogger(_getNameInPreviousFrame())
+    logger.debug(message)
+
+def info(message):
+    logger = _logging.getLogger(_getNameInPreviousFrame())
+    logger.info(message)
+
+def warn(message):
+    logger = _logging.getLogger(_getNameInPreviousFrame())
+    logger.warn(message)
+
+def error(message):
+    logger = _logging.getLogger(_getNameInPreviousFrame())
+    logger.error(message)
+
+def critical(message):
+    logger = _logging.getLogger(_getNameInPreviousFrame())
+    logger.critical(message)
+
+def exception(message):
+    logger = _logging.getLogger(_getNameInPreviousFrame())
+    logger.exception(message)
+
+#from logging import debug, info, warn, error, critical, exception
 from unittest import TestCase, main
 from sqlalchemy import create_engine as _create_engine
 engine = _create_engine("sqlite:///test3.sqlite", echo=False)
@@ -31,3 +63,10 @@ class _Test(TestCase):
         self.assertIsInstance(l, _datetime, "now() should returns an instance off datetime")
         self.assertIsNone(l.tzinfo, "now() should returns native datetime instance")
         info(l.ctime())
+
+    def testStackTrace(self):
+        info("testStackTrace")
+
+if __name__ == "__main__":
+    main()
+

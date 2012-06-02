@@ -98,9 +98,9 @@ class Crawl(DeclarativeBase, GvizDataTableMixin):
 class _Test(TestCase):
     def setUp(self):
         #DeclarativeBase.metadata.create_all(engine)
-        if Crawl.exists():
-            Crawl.dropTable()
-        self.assertFalse(Crawl.exists(), "Crawl table should be deleted at the start of tests.")
+        #if Crawl.exists():
+        #    Crawl.dropTable()
+        #self.assertFalse(Crawl.exists(), "Crawl table should be deleted at the start of tests.")
         Crawl.createTable()
         self.assertTrue(Crawl.exists(), "Crawl table does not exists.")
     
@@ -115,7 +115,7 @@ class _Test(TestCase):
         session.close()
     
     def testGvizSchema(self):
-        debug("testGvizSchema")
+        info("testGvizSchema")
         debug(Crawl.getGvizSchema())
     
     def testGvizData(self):
@@ -131,8 +131,9 @@ class _Test(TestCase):
         session.commit()
         session.close()
         session = Session()
-        debug(Crawl.getGvizDataTable(session).ToJSon())
+        info(Crawl.getGvizDataTable(session).ToJSon())
         session.close()
+        
 
 if __name__ == "__main__":
     main()

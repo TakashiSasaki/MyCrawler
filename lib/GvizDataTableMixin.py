@@ -1,4 +1,10 @@
 from config import *
+import logging
+logger = logging.getLogger(__name__)
+warn = logger.warn
+info = logger.info
+debug = logger.debug
+error = logger.error
 from gviz_api import DataTable
 from sqlalchemy import Column, Table
 from sqlalchemy.orm.query import Query
@@ -42,6 +48,7 @@ class GvizDataTableMixin(object):
     
     @classmethod
     def dropTable(cls):
+        warn("table %s is being dropped" % cls.__name__)
         try:
             table = cls.getTable()
             debug("dropping table " + str(table))
