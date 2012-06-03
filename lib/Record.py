@@ -95,16 +95,16 @@ class Record(DeclarativeBase, GvizDataTableMixin):
         assert isinstance(belongs_to, int)
         self.belongsTo = belongs_to 
         
-    exhaustive = Column(Boolean(), nullable=False)
+    exhaustive = Column(Boolean(), nullable=False, index=True, default=False)
     def getExhaustive(self):
         return self.getCompleted()
     def setExhaustive(self, is_completed):
         assert isinstance(is_completed, bool)
         self.completed = is_completed
         
-    archived = Column(Boolean(), index=True, nullable=False)
-    starred = Column(Boolean(), index=True, nullable=False)
-    uploaded = Column(Boolean(), index=True, nullable=False)
+    archived = Column(Boolean(), index=True, nullable=False, default=False)
+    starred = Column(Boolean(), index=True, nullable=False, default=False)
+    uploaded = Column(Boolean(), index=True, nullable=False, default=False)
     
     memo0 = Column(String(), nullable=True)
     memo1 = Column(String(), nullable=True)
@@ -137,7 +137,14 @@ class Record(DeclarativeBase, GvizDataTableMixin):
         except:
             pass
 
-        
+    @classmethod
+    def dropAndCreateTable(cls, message):
+            print(message)
+            x = raw_input("Drop and create Record table ? (Y/n) : ")
+            if x == "Y":
+                cls.dropTable()
+                cls.createTable()
+
 
 class MemoMap(DeclarativeBase):
     __tablename__ = "MemoMap"
@@ -182,12 +189,24 @@ class _Test(TestCase):
         Crawl.dropTable()
         
     def testGviz(self):
-        debug(Record.getGvizSchema())
+        crawl = Crawl()
+        crawl.begin()
+        session = Session()
+        session.add(crawl)
+        session.commit()
+        
         record = Record()
         record.setUrl("http://example.com/")
+        record.setCrawlId(crawl.crawlId)
+        record.setLastSeen(utcnow())
         session = Session()
         session.add(record)
-        session.commit()
+        try:
+            session.commit()
+        except IntegrityError,e:
+            session.close()
+            Record.dropAndCreateTable(e.message)
+            self.fail(e.message)
         data_table = record.getGvizDataTable(session)
         session.close()
         debug(data_table.ToJSCode("x"))

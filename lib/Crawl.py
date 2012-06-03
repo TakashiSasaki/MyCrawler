@@ -20,10 +20,10 @@ class Crawl(DeclarativeBase, GvizDataTableMixin):
     userDomain = Column(String(), nullable=False, index=True)
     nProcessedItems = Column(Integer(), nullable=True, index=False)
     nProcessedBytes = Column(Integer(), nullable=True, index=False)
-    completed = Column(Boolean(), nullable=False, index=False)
-    archived = Column(Boolean(), nullable=False, index=True)
-    starred = Column(Boolean(), nullable=False, index=True)
-    uploaded = Column(Boolean(), nullable=False, index=True)
+    completed = Column(Boolean(), nullable=False, index=False, default=False)
+    archived = Column(Boolean(), nullable=False, index=True, default=False)
+    starred = Column(Boolean(), nullable=False, index=True, default=False)
+    uploaded = Column(Boolean(), nullable=True, index=True, default=False)
     
     def __init__(self, email_style_user_identifier=None):
         from uuid import getnode
@@ -99,8 +99,8 @@ class Crawl(DeclarativeBase, GvizDataTableMixin):
             print(message)
             x = raw_input("Drop and create Crawl table ? (Y/n) : ")
             if x == "Y":
-                Crawl.dropTable()
-                Crawl.createTable()
+                cls.dropTable()
+                cls.createTable()
 
 class _Test(TestCase):
     def setUp(self):
@@ -145,12 +145,14 @@ class _Test(TestCase):
         debug("testGvizDataTable")
         session = Session()
         crawl = Crawl()
+        crawl.begin()
+        crawl.end()
         session.add(crawl)
         try:
             session.commit()
         except IntegrityError, e:
             session.close()
-            Crawl._dropAndCreate(e.message)
+            Crawl.dropAndCreate(e.message)
             self.fail(e.message)
         session.close()
         session = Session()

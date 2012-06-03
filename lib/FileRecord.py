@@ -4,7 +4,7 @@ from Record import Record
 from sqlalchemy import desc
 from Crawl import Crawl
 from datetime import datetime, timedelta
-from sqlalchemy.exc import OperationalError
+from sqlalchemy.exc import OperationalError, IntegrityError
 
 class FileRecord(Record):
     __slots__ = ("created")
@@ -55,8 +55,14 @@ class _Test(TestCase):
     def test(self):
         session = Session()
         crawl = Crawl()
+        crawl.begin()
         session.add(crawl)
-        session.commit()
+        try:
+            session.commit()
+        except IntegrityError, e:
+            session.close()
+            Crawl.dropAndCreate(e.message)
+            self.fail(e.message)
         file_info = FileRecord()
         file_info.setCrawlId(crawl.crawlId)
         file_info.setUrl("file:///c:/example")
