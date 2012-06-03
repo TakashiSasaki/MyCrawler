@@ -7,6 +7,7 @@ from hashlib import sha1
 from threading import Thread
 from lib.FileRecord import FileRecord
 import dateutil
+from sqlalchemy.exc import IntegrityError
 
 EXCLUDE_DIRECTORIES = ["$Recycle.Bin"]
 
@@ -87,6 +88,7 @@ class FileCrawler(Thread):
         self.sqlAlchemySession = sqlalchemy_session
         self.hostName = _getHostName()
         self.crawl = Crawl()
+        self.crawl.begin()
         self.sqlAlchemySession.add(self.crawl)
         self.sqlAlchemySession.commit()
     
@@ -156,7 +158,12 @@ class _Test(TestCase):
     
     def test1(self):
         session = Session()
-        file_crawler = FileCrawler("C://", session, max_files=10)
+        try:
+            file_crawler = FileCrawler("C://", session, max_files=10)
+        except IntegrityError, e:
+            session.close()
+            Crawl.dropAndCreate(e.message)
+            self.fail(e.message)
         file_crawler.start()
         count = 0
         while count < 3:

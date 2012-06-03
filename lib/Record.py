@@ -14,12 +14,12 @@ class Record(DeclarativeBase, GvizDataTableMixin):
     __tablename__ = "Record"
     __table_args__ = {'sqlite_autoincrement': True}
     
-    objectId = Column(Integer, primary_key=True) #unique only on this database
+    objectId = Column(Integer, primary_key=True, index=True, nullable=False) #unique only on this database
     def getObjectId(self):
         """objectId is the primary key and automatically set"""
         return self.objectId
     
-    crawlId = Column(Integer, ForeignKey('Crawl.crawlId'), index=True) #identical for one session
+    crawlId = Column(Integer, ForeignKey('Crawl.crawlId'), index=True, nullable=False) #identical for one session
     myCrawlTable = relation(Crawl)
     def getCrawlId(self):
         """crawlId is given for one crawl and is a foreign key of MyCrawl table."""
@@ -28,7 +28,7 @@ class Record(DeclarativeBase, GvizDataTableMixin):
         assert isinstance(crawl_id , int)
         self.crawlId = crawl_id
     
-    uri = Column(String())
+    uri = Column(String(), index=True, nullable=True)
     def getUri(self):
         return self.uri
     def setUri(self, uri_):
@@ -39,10 +39,10 @@ class Record(DeclarativeBase, GvizDataTableMixin):
         unsplit_uri = urlunsplit(split_uri)
         if unsplit_uri != uri_:
             debug(unsplit_uri + " != " + uri_)
-            raise Exception("%s != %s " %(unsplit_uri ,uri_))
+            raise Exception("%s != %s " % (unsplit_uri , uri_))
         self.uri = uri_
 
-    url = Column(String(), index=True)
+    url = Column(String(), index=True, nullable=True)
     def getUrl(self):
         return self.url
     def setUrl(self, url_):
@@ -56,14 +56,14 @@ class Record(DeclarativeBase, GvizDataTableMixin):
             raise Exception("unacceptable scheme for URL: + " + parse_result["scheme"])
         self.url = url_
     
-    size = Column(Integer(), nullable=True)
+    size = Column(Integer(), nullable=True, index=True)
     def getSize(self):
         return self.getSize()
     def setSize(self, size_):
         assert isinstance(size_, long)
         self.size = size_
 
-    lastModified = Column(DateTime()) #last modified datetime
+    lastModified = Column(DateTime(), index=True, nullable=True) #last modified datetime
     def getLastModified(self):
         return self.lastModified
     def setLastModified(self, last_modified):
@@ -71,7 +71,7 @@ class Record(DeclarativeBase, GvizDataTableMixin):
         assert last_modified.tzinfo is not None # avoid naive datetime
         self.lastModified = last_modified
     
-    lastSeen = Column(DateTime(), index=True) #last seen datetime
+    lastSeen = Column(DateTime(), index=True, nullable=False) #last seen datetime
     def getLastSeen(self):
         return self.lastSeen
     def setLastSeen(self, last_seen):
@@ -79,7 +79,7 @@ class Record(DeclarativeBase, GvizDataTableMixin):
         assert last_seen.tzinfo is not None
         self.lastSeen = last_seen
     
-    jsonString = Column(String()) #serialized data
+    jsonString = Column(String(), nullable=True) #serialized data
     def getJsonString(self):
         return self.jsonString
     def setJsonString(self, json_string):
@@ -88,38 +88,33 @@ class Record(DeclarativeBase, GvizDataTableMixin):
         x = loads(json_string)
         self.jsonString = dumps(x)
     
-    belongsTo = Column(Integer())
+    belongsTo = Column(Integer(), index=True, nullable=True)
     def getBelongsTo(self):
         return self.belongsTo
     def setBelongsTo(self, belongs_to):
         assert isinstance(belongs_to, int)
         self.belongsTo = belongs_to 
         
-    exhaustive = Column(Boolean())
+    exhaustive = Column(Boolean(), nullable=False)
     def getExhaustive(self):
         return self.getCompleted()
     def setExhaustive(self, is_completed):
         assert isinstance(is_completed, bool)
         self.completed = is_completed
+        
+    archived = Column(Boolean(), index=True, nullable=False)
+    starred = Column(Boolean(), index=True, nullable=False)
+    uploaded = Column(Boolean(), index=True, nullable=False)
     
     memo0 = Column(String(), nullable=True)
-
     memo1 = Column(String(), nullable=True)
-
     memo2 = Column(String(), nullable=True)
-
     memo3 = Column(String(), nullable=True)
-
     memo4 = Column(String(), nullable=True)
-
     memo5 = Column(String(), nullable=True)
-
     memo6 = Column(String(), nullable=True)
-
     memo7 = Column(String(), nullable=True)
-
     memo8 = Column(String(), nullable=True)
-
     memo9 = Column(String(), nullable=True)
 
     def __str__(self):
@@ -182,7 +177,7 @@ class _Test(TestCase):
         session = Session()
         session.add(crawl)
         session.commit()
-        debug("crawlId of inserted record is %s" %(crawl.crawlId))
+        debug("crawlId of inserted record is %s" % (crawl.crawlId))
         session.close()
         Crawl.dropTable()
         

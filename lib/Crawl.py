@@ -3,6 +3,8 @@ from sqlalchemy import Column, String, Integer, DateTime
 from datetime import datetime, timedelta
 from DeclarativeBase import DeclarativeBase
 from lib.GvizDataTableMixin import GvizDataTableMixin
+from sqlalchemy.types import Boolean
+from sqlalchemy.exc import IntegrityError
 
 
 class Crawl(DeclarativeBase, GvizDataTableMixin):
@@ -10,21 +12,18 @@ class Crawl(DeclarativeBase, GvizDataTableMixin):
     __table_args__ = {'sqlite_autoincrement': True}
     
     
-    crawlId = Column(Integer(), primary_key=True)
-    
+    crawlId = Column(Integer(), primary_key=True, index=True, nullable=False)
     agentId = Column(Integer(), nullable=False, index=True) #MAC address can be used
-    
-    beginDateTime = Column(DateTime(), nullable=True)
-    
-    endDateTime = Column(DateTime(), nullable=True)
-    
-    userName = Column(String(), nullable=False)
-    
-    userDomain = Column(String(), nullable=False)
-    
-    nProcessedItems = Column(Integer(), nullable=False)
-    
-    nProcessedBytes = Column(Integer(), nullable=False)
+    beginDateTime = Column(DateTime(), nullable=False, index=True)
+    endDateTime = Column(DateTime(), nullable=True, index=True)
+    userName = Column(String(), nullable=False, index=True)
+    userDomain = Column(String(), nullable=False, index=True)
+    nProcessedItems = Column(Integer(), nullable=True, index=False)
+    nProcessedBytes = Column(Integer(), nullable=True, index=False)
+    completed = Column(Boolean(), nullable=False, index=False)
+    archived = Column(Boolean(), nullable=False, index=True)
+    starred = Column(Boolean(), nullable=False, index=True)
+    uploaded = Column(Boolean(), nullable=False, index=True)
     
     def __init__(self, email_style_user_identifier=None):
         from uuid import getnode
@@ -94,6 +93,14 @@ class Crawl(DeclarativeBase, GvizDataTableMixin):
     
     def getBytesPerSecond(self):
         return self.getNumberOfProcessedBytes() / self.getElapsedSeconds()
+    
+    @classmethod
+    def dropAndCreate(cls, message):
+            print(message)
+            x = raw_input("Drop and create Crawl table ? (Y/n) : ")
+            if x == "Y":
+                Crawl.dropTable()
+                Crawl.createTable()
 
 class _Test(TestCase):
     def setUp(self):
@@ -104,13 +111,24 @@ class _Test(TestCase):
         Crawl.createTable()
         self.assertTrue(Crawl.exists(), "Crawl table does not exists.")
     
+
     def testAutoIncrement(self):
         session = Session()
         my_crawl_1 = Crawl()
+        my_crawl_1.begin()
+        my_crawl_1.end()
         session.add(my_crawl_1)
         my_crawl_2 = Crawl()
+        my_crawl_2.begin()
+        my_crawl_2.end()
         session.add(my_crawl_2)
-        session.commit()
+        try:
+            session.commit()
+        except IntegrityError,e:
+            session.close()
+            Crawl._dropAndCreate(e.message)
+            self.fail(e.message)
+            
         self.assertEqual(my_crawl_1.crawlId + 1, my_crawl_2.crawlId)
         session.close()
     
@@ -128,7 +146,12 @@ class _Test(TestCase):
         session = Session()
         crawl = Crawl()
         session.add(crawl)
-        session.commit()
+        try:
+            session.commit()
+        except IntegrityError, e:
+            session.close()
+            Crawl._dropAndCreate(e.message)
+            self.fail(e.message)
         session.close()
         session = Session()
         info(Crawl.getGvizDataTable(session).ToJSon())
