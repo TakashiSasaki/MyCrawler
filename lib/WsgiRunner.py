@@ -1,6 +1,7 @@
 from config import *
 from wsgiref.simple_server import demo_app
 from threading import Thread
+import logging
 
 class WsgirefThread(Thread):
     """wsgiref.simple_server is a WSGI application runner."""
@@ -70,7 +71,9 @@ class PasteThread(Thread):
                          start_loop=False,
                          use_threadpool=True,
                          protocol_version="HTTP/1.1",
-                         socket_timeout=5)
+                         socket_timeout=5,
+                         )
+        self.server.thread_pool.logger.setLevel(logging.WARN)
         if not hasattr(self.server, "timeout") or self.server.timeout is None:
             self.server.timeout = 1
         if self.server.timeout != 1:
