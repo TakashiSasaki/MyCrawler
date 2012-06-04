@@ -12,7 +12,7 @@ class Crawl(DeclarativeBase, GvizDataTableMixin, TableMixin):
     
     
     crawlId = Column(Integer(), primary_key=True, index=True, nullable=False)
-    agentId = Column(Integer(), nullable=False, index=True) #MAC address can be used
+    agentId = Column(String(), nullable=False, index=True) #MAC address can be used
     beginDateTime = Column(DateTime(), nullable=False, index=True)
     endDateTime = Column(DateTime(), nullable=True, index=True)
     userName = Column(String(), nullable=False, index=True)
@@ -161,7 +161,7 @@ class _Test(TestCase):
             self.fail(e.message)
         session.close()
         session = Session()
-        info(Crawl.getGvizDataTable(session).ToJSon())
+        info(Crawl.getGvizDataTable(session).ToJSonResponse())
         session.close()
 
 if __name__ == "__main__":

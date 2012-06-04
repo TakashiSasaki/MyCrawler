@@ -71,9 +71,8 @@ class _Test(TestCase):
         last = SyncState.getLast(2)
         self.assertIsInstance(last, list)
         self.assertEqual(len(last), 2)
-        self.assertGreater(last[0].lockBegin, last[1].lockBegin)
-        
-        
+        self.assertGreaterEqual(last[0].lockBegin, last[1].lockBegin)
+
     def tearDown(self):
         TestCase.tearDown(self)
 

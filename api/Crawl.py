@@ -3,51 +3,15 @@ from webapp2 import RequestHandler, WSGIApplication
 from paste.request import path_info_pop
 from lib.Crawl import Crawl
 from sqlalchemy.exc import OperationalError
+from api.TableMixin import TableMixin
 
-class _CrawlHandler(RequestHandler):
+class _CrawlHandler(RequestHandler, TableMixin):
+    table = Crawl
     def get(self):
+        if self.getTableMixin(): return
+        return
         self.lastPathInfo = self.request.path_info
-        if self.request.path_info == "":
-            session = Session()
-            try:
-                data_table = Crawl.getGvizDataTable(session)
-                session.close()
-                self.response.out.write(data_table.ToJSonResponse())
-                return
-            except OperationalError, e:
-                self.response.set_status(404)
-                self.response.out.write(e.message)
-                return
 
-        if self.request.path_info == "/create":
-            try:
-                Crawl.createTable()
-                self.response.set_status(200)
-                self.response.out.write("Crawl.createTable")
-            except Exception, e:
-                self.response.set_status(500)
-                self.response.out.write(e.message)
-            return
-        
-        if self.request.path_info == "/drop":
-            try:
-                Crawl.dropTable()
-                self.response.set_status(200)
-                self.response.out.write("Crawl.dropTable")
-            except Exception,e :
-                self.response.set_status(500)
-                self.response.out.write(e.message)
-            return
-        if self.request.path_info == "/dummy":
-            try:
-                Crawl.insertDummyRecords()
-                self.response.set_status(200)
-                self.response.out.write("Crawl.insertDummyRecords")
-            except Exception, e:
-                self.response.set_status(500)
-                self.response.out.write(e.message)
-            return     
-            
     def getLastPathInfo(self):
         return self.lastPathIngo
 
