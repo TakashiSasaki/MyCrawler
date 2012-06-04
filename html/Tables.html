@@ -18,37 +18,42 @@
 				//alert("drawRecord");
 				var wrapRecord = new google.visualization.ChartWrapper({
 					"dataSourceUrl" : "/api/Record",
+					"dataSourceUrl" : "http://spreadsheets.google.com/tq?key=pCQbetd-CptGXxxQIG7VFIQ&pub=1",
 					"refreshInterval" : 5
 				});
 				wrapRecord.setChartType('Table');
 				wrapRecord.setContainerId('tableRecord');
 				wrapRecord.draw();
-			};
-			$("#pageCrawl").live('pageshow', drawCrawl);
-			var wrapCrawl;
-			function drawCrawl(event) {
-				//alert("drawCrawl");
-				wrapCrawl = new google.visualization.ChartWrapper({
-					"dataSourceUrl" :'http://spreadsheets.google.com/tq?key=pCQbetd-CptGXxxQIG7VFIQ&pub=1',
-					"dataSourceUrl" :'/api/Crawl',
-					"refreshInterval" : 5
+			}
+
+
+			$("#pageCrawl").live('pageshow', queryCrawl);
+			function queryCrawl() {
+				query = new google.visualization.Query("/api/Crawl", {"sendMethod": "xhr"});
+				query.setTimeout(10);
+				query.setRefreshInterval(5);
+				query.send(function (response) {
+					data_table = response.getDataTable();
+					wrapCrawl = new google.visualization.ChartWrapper();
+					wrapCrawl.setDataTable(data_table);
+					wrapCrawl.setChartType('Table');
+					wrapCrawl.setContainerId('tableCrawl');
+					wrapCrawl.draw();
 				});
-				wrapCrawl.setChartType('Table');
-				wrapCrawl.setRefreshInterval(1);
-				wrapCrawl.setContainerId('tableCrawl');
-				wrapCrawl.draw();
-			};
+			}
+
+
 			$("#pageSyncStatus").live('pageshow', drawSyncStatus);
 			function drawSyncStatus(event) {
 				//alert("drawSyncStatus");
 				wrapSyncStatus = new google.visualization.ChartWrapper({
-					"dataSourceUrl" :'/api/SyncStatus',
+					"dataSourceUrl" : '/api/SyncStatus',
 					"refreshInterval" : 5
 				});
 				wrapSyncStatus.setChartType('Table');
 				wrapSyncStatus.setContainerId('tableSyncStatus');
 				wrapSyncStatus.draw();
-			};
+			}
 		</script>
 
 		<div data-role="page" id="pageRecord">
@@ -103,18 +108,21 @@
 				<script>
 					function dropCrawl() {
 						$.ajax('/api/Crawl/drop');
+						queryCrawl();
 					}
 				</script>
 				<span onclick="createCrawl()" data-role="button">create</span>
 				<script>
 					function createCrawl() {
 						$.ajax('/api/Crawl/create');
+						queryCrawl();
 					}
 				</script>
 				<span onclick="dummyCrawl()" data-role="button">dummy</span>
 				<script>
 					function dummyCrawl() {
 						$.ajax('/api/Crawl/dummy');
+						queryCrawl();
 					}
 				</script>
 			</div>
