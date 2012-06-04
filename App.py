@@ -28,9 +28,9 @@ if __name__ == "__main__":
     while True:
         from lib.WsgiRunner import PasteThread
         paste_thread = PasteThread(cascaded_app, 10523, timeout=20)
-        info("starting PasteThread")
+        debug("starting PasteThread")
         paste_thread.start()
-        info("waiting for PasteThread to stop")
+        debug("waiting for PasteThread to stop")
         paste_thread.join()
         info("restarting PasteThread")
         

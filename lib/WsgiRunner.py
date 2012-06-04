@@ -42,7 +42,7 @@ class _Watchdog(object):
                 return
             self.count += 1
             if self.limit < self.count:
-                info("server will be shut down")
+                debug("server will be shut down")
                 self.server.server_close()
         return timeout_handler
 
@@ -52,7 +52,7 @@ class _Watchdog(object):
         
 class PasteThread(Thread):
     """paste.httpserve is a WSGI application runner. """
-    __slots__=("server")
+    __slots__ = ("server")
     
     def __init__(self, app, port, timeout=5):
         self.timeout = timeout
@@ -72,6 +72,13 @@ class PasteThread(Thread):
                          use_threadpool=True,
                          protocol_version="HTTP/1.1",
                          socket_timeout=5,
+                         threadpool_options={
+                                             "hung_thread_limit": 10,
+                                             "kill_thread_limit" : 20,
+                                             "dying_limit": 30,
+                                             "hung_check_period" : 5
+                                             
+                                             }
                          )
         self.server.thread_pool.logger.setLevel(logging.WARN)
         if not hasattr(self.server, "timeout") or self.server.timeout is None:
@@ -82,7 +89,7 @@ class PasteThread(Thread):
         assert self.server.timeout == 1
         self.server.handle_timeout = _Watchdog(self.server, limit=self.timeout).getTimeoutHandler()
         self.server.serve_forever()
-        info("server_forever finished")
+        debug("server_forever finished")
         
     
     
