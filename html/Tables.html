@@ -25,9 +25,9 @@
 				wrapRecord.draw();
 			};
 			$("#pageCrawl").live('pageshow', drawCrawl);
+			var wrapCrawl;
 			function drawCrawl(event) {
 				//alert("drawCrawl");
-				var wrapCrawl;
 				wrapCrawl = new google.visualization.ChartWrapper({
 					"dataSourceUrl" :'http://spreadsheets.google.com/tq?key=pCQbetd-CptGXxxQIG7VFIQ&pub=1',
 					"dataSourceUrl" :'/api/Crawl',

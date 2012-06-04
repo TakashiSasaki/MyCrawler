@@ -1,5 +1,6 @@
 from config import *
 import lib
+import time
 
 class TableMixin(object):
 
@@ -15,6 +16,7 @@ class TableMixin(object):
                 data_table = self.table.getGvizDataTable(session)
                 session.close()
                 self.response.set_status(200)
+                self.response.expires = time.time()
                 self.response.out.write(data_table.ToJSonResponse())
             except Exception, e:
                 self.response.set_status(500)
