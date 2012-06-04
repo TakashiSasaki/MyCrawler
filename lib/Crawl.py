@@ -1,12 +1,10 @@
 from config import *
-from sqlalchemy import Column, String, Integer, DateTime
+from sqlalchemy import Column, String, Integer, DateTime, Boolean
 from datetime import datetime, timedelta
-from DeclarativeBase import DeclarativeBase
+from lib.DeclarativeBase import DeclarativeBase
 from lib.GvizDataTableMixin import GvizDataTableMixin
 from lib.TableMixin import TableMixin
-from sqlalchemy.types import Boolean
 from sqlalchemy.exc import IntegrityError
-
 
 class Crawl(DeclarativeBase, GvizDataTableMixin, TableMixin):
     __tablename__ = "Crawl"
