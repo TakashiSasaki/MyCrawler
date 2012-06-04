@@ -7,31 +7,34 @@ def _getNameInPreviousFrame():
     return name
 
 import logging as _logging
-_logging.basicConfig(level=_logging.INFO)
+LOG_LEVEL = _logging.INFO
+_logging.basicConfig(level=LOG_LEVEL)
+logger = _logging.getLogger("")
+logger.setLevel(LOG_LEVEL)
 
 def debug(message):
-    logger = _logging.getLogger(_getNameInPreviousFrame())
-    logger.debug(message)
+    _logger = _logging.getLogger(_getNameInPreviousFrame())
+    _logger.debug(message)
 
 def info(message):
-    logger = _logging.getLogger(_getNameInPreviousFrame())
-    logger.info(message)
+    _logger = _logging.getLogger(_getNameInPreviousFrame())
+    _logger.info(message)
 
 def warn(message):
-    logger = _logging.getLogger(_getNameInPreviousFrame())
-    logger.warn(message)
+    _logger = _logging.getLogger(_getNameInPreviousFrame())
+    _logger.warn(message)
 
 def error(message):
-    logger = _logging.getLogger(_getNameInPreviousFrame())
-    logger.error(message)
+    _logger = _logging.getLogger(_getNameInPreviousFrame())
+    _logger.error(message)
 
 def critical(message):
-    logger = _logging.getLogger(_getNameInPreviousFrame())
-    logger.critical(message)
+    _logger = _logging.getLogger(_getNameInPreviousFrame())
+    _logger.critical(message)
 
 def exception(message):
-    logger = _logging.getLogger(_getNameInPreviousFrame())
-    logger.exception(message)
+    _logger = _logging.getLogger(_getNameInPreviousFrame())
+    _logger.exception(message)
 
 #from logging import debug, info, warn, error, critical, exception
 from unittest import TestCase, main
