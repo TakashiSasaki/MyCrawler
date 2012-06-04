@@ -51,6 +51,8 @@ class _Watchdog(object):
         
 class PasteThread(Thread):
     """paste.httpserve is a WSGI application runner. """
+    __slots__=("server")
+    
     def __init__(self, app, port, timeout=5):
         self.timeout = timeout
         Thread.__init__(self)
@@ -64,20 +66,25 @@ class PasteThread(Thread):
     def run(self):
         print ("running " + self.name + " by paste on localhost:" + str(self.app))
         from paste import httpserver
-        server = httpserver.serve(self.app, host='127.0.0.1', port=str(self.port),
+        self.server = httpserver.serve(self.app, host='127.0.0.1', port=str(self.port),
                          start_loop=False,
                          use_threadpool=True,
                          protocol_version="HTTP/1.1",
                          socket_timeout=5)
-        if not hasattr(server, "timeout") or server.timeout is None:
-            server.timeout = 1
-        if server.timeout != 1:
-            warn("server.timeout was changed from %d to 1" % (server.timeout))
-            server.timeout = 1
-        assert server.timeout == 1
-        server.handle_timeout = _Watchdog(server, limit=self.timeout).getTimeoutHandler()
-        server.serve_forever()
+        if not hasattr(self.server, "timeout") or self.server.timeout is None:
+            self.server.timeout = 1
+        if self.server.timeout != 1:
+            warn("server.timeout was changed from %d to 1" % (self.server.timeout))
+            self.server.timeout = 1
+        assert self.server.timeout == 1
+        self.server.handle_timeout = _Watchdog(self.server, limit=self.timeout).getTimeoutHandler()
+        self.server.serve_forever()
         info("server_forever finished")
+        
+    
+    
+    def shutdown(self):
+        self.server.server_close()
 
 import webbrowser
 

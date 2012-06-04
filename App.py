@@ -36,3 +36,28 @@ if __name__ == "__main__":
         
     import webbrowser
     webbrowser.open("http://localhost:10523/Record.html", autoraise=1)
+
+class _Test(TestCase):
+    crawlAppPort = 20010
+    
+    def setUp(self):
+        from lib.WsgiRunner import PasteThread
+        self.pasteThread = PasteThread(CrawlApp(), self.crawlAppPort, timeout=5)
+        self.pasteThread.start()
+        self.assertTrue(self.pasteThread.isAlive())
+        import time
+        time.sleep(1)
+        
+    def test(self):
+        from httplib import HTTPConnection
+        http_connection = HTTPConnection("localhost", port=self.crawlAppPort)
+        http_connection.request('GET', "/api/Crawl")
+        response = http_connection.getresponse()
+        info(response.status)
+        info(response.read())
+    
+    def tearDown(self):
+        info("shutting down")
+        self.pasteThread.shutdown()
+        info("joining")
+        self.pasteThread.join()
