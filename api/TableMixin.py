@@ -17,7 +17,8 @@ class TableMixin(object):
                 session.close()
                 self.response.set_status(200)
                 self.response.expires = time.time()
-                self.response.out.write(data_table.ToJSonResponse())
+                tqx = self.request.GET["tqx"]
+                self.response.out.write(data_table.ToResponse(tqx=tqx))
             except Exception, e:
                 self.response.set_status(500)
                 self.response.out.write(e.message)
