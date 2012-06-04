@@ -7,6 +7,7 @@ from sqlalchemy.exc import OperationalError
 class _CrawlHandler(RequestHandler):
     def get(self):
         self.response.out.write(self.request.path_info)
+        self.lastPathInfo = self.request.path_info
         if self.request.path_info == "":
             session = Session()
             try:
@@ -17,6 +18,9 @@ class _CrawlHandler(RequestHandler):
                 self.response.out.write(e.message)
                 return
             self.response.out.write(data_table.ToJSonResponse())
+            
+    def getLastPathInfo(self):
+        return self.lastPathIngo
 
 class CrawlApp(WSGIApplication):
     def __init__(self):
@@ -29,11 +33,23 @@ class CrawlApp(WSGIApplication):
         return WSGIApplication.__call__(self, environ, start_response)
 
 class _Test(TestCase):
+    port = 20111
+    
     def setUp(self):
         TestCase.setUp(self)
-
-    def test(self):
-        app = CrawlApp()
+        from lib.WsgiRunner import PasteThread
+        self.pasteThread = PasteThread(CrawlApp(), self.port, timeout=5)
+        self.pasteThread.start()
+        import time
+        time.sleep(1)
+        
+    def testGet(self):
+        self.assertTrue(self.pasteThread.isAlive())
+        from httplib import HTTPConnection
+        http_connection = HTTPConnection("localhost", port=self.port)
+        http_connection.request("GET", "/api/Crawl")
+        response = http_connection.getresponse()
+        self.assertTrue(response.status == 404 or response.status == 200)
     
     def test2(self):
         session = Session()

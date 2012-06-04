@@ -1,12 +1,6 @@
 from config import *
-import logging
-logger = logging.getLogger(__name__)
-warn = logger.warn
-info = logger.info
-debug = logger.debug
-error = logger.error
 from gviz_api import DataTable
-from sqlalchemy import Column, Table
+from sqlalchemy import Column
 from sqlalchemy.orm.query import Query
 from sqlalchemy.types import BigInteger, Boolean, Date, DateTime, Enum, Float, Integer, Interval, LargeBinary, Numeric
 from sqlalchemy.types import PickleType, SchemaType, SmallInteger, String, Text, Time, Unicode, UnicodeText
@@ -33,38 +27,6 @@ class GvizDataTableMixin(object):
     @classmethod
     def getMetadata(cls):
         return cls.metadata
-    
-    @classmethod
-    def getTable(cls):
-        assert isinstance(cls.__tablename__, str)
-        table = cls.getMetadata().tables[cls.__tablename__]
-        assert isinstance(table, Table)
-        return table
-    
-    @classmethod
-    def exists(cls):
-        table = cls.getTable()
-        return table.exists(engine)
-    
-    @classmethod
-    def dropTable(cls):
-        warn("table %s is being dropped" % cls.__name__)
-        try:
-            table = cls.getTable()
-            debug("dropping table " + str(table))
-            table.drop(engine, checkfirst=True)
-        except Exception, e:
-            exception(e.message)
-            raise e
-        
-    @classmethod
-    def createTable(cls):
-        try:
-            table = cls.getTable()
-            table.create(engine, checkfirst=True)
-        except Exception, e:
-            exception(e.message)
-            raise e
     
     @classmethod
     def getColumns(cls):
@@ -115,3 +77,10 @@ class GvizDataTableMixin(object):
             assert isinstance(gviz_data, list)
             data_table.AppendData([gviz_data])
         return data_table
+
+class _Test(TestCase):
+    def setUp(self):
+        TestCase.setUp(self)
+    
+    def tearDown(self):
+        TestCase.tearDown(self)

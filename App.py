@@ -53,8 +53,7 @@ class _Test(TestCase):
         http_connection = HTTPConnection("localhost", port=self.crawlAppPort)
         http_connection.request('GET', "/api/Crawl")
         response = http_connection.getresponse()
-        info(response.status)
-        info(response.read())
+        self.assertTrue(response.status == 404 or response.status == 200)
     
     def tearDown(self):
         info("shutting down")

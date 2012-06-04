@@ -3,11 +3,12 @@ from sqlalchemy import Column, String, Integer, DateTime
 from datetime import datetime, timedelta
 from DeclarativeBase import DeclarativeBase
 from lib.GvizDataTableMixin import GvizDataTableMixin
+from lib.TableMixin import TableMixin
 from sqlalchemy.types import Boolean
 from sqlalchemy.exc import IntegrityError
 
 
-class Crawl(DeclarativeBase, GvizDataTableMixin):
+class Crawl(DeclarativeBase, GvizDataTableMixin, TableMixin):
     __tablename__ = "Crawl"
     __table_args__ = {'sqlite_autoincrement': True}
     
@@ -94,14 +95,6 @@ class Crawl(DeclarativeBase, GvizDataTableMixin):
     def getBytesPerSecond(self):
         return self.getNumberOfProcessedBytes() / self.getElapsedSeconds()
     
-    @classmethod
-    def dropAndCreate(cls, message):
-            print(message)
-            x = raw_input("Drop and create Crawl table ? (Y/n) : ")
-            if x == "Y":
-                cls.dropTable()
-                cls.createTable()
-
 class _Test(TestCase):
     def setUp(self):
         #DeclarativeBase.metadata.create_all(engine)
