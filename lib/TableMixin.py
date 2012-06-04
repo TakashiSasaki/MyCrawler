@@ -42,4 +42,17 @@ class TableMixin(object):
             if x == "Y":
                 cls.dropTable()
                 cls.createTable()
+    
+    @classmethod
+    def count(cls):
+        session = Session()
+        query = session.query(cls)
+        c = query.count()
+        session.close()
+        return c
 
+    @classmethod
+    def getQuery(cls):
+        session = Session()
+        query = session.query(cls.getTable())
+        return query
