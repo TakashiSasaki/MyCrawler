@@ -5,7 +5,6 @@ import time
 class TableMixin(object):
 
     def getTableMixin(self):
-        info(self.table)
         assert issubclass(self.table, lib.DeclarativeBase.DeclarativeBase)
         assert issubclass(self.table, lib.GvizDataTableMixin.GvizDataTableMixin)
         assert issubclass(self.table, lib.TableMixin.TableMixin)
