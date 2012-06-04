@@ -93,6 +93,18 @@ class Crawl(DeclarativeBase, GvizDataTableMixin, TableMixin):
     def getBytesPerSecond(self):
         return self.getNumberOfProcessedBytes() / self.getElapsedSeconds()
     
+    @classmethod
+    def insertDummyRecords(cls):
+        session = Session()
+        from uuid import uuid1
+        for x in [1,2,3]:
+            crawl = Crawl()
+            crawl.begin()
+            crawl.end()
+            crawl.agentId = uuid1().get_hex()
+            session.add(crawl)
+        session.commit() 
+    
 class _Test(TestCase):
     def setUp(self):
         #DeclarativeBase.metadata.create_all(engine)
@@ -102,6 +114,8 @@ class _Test(TestCase):
         Crawl.createTable()
         self.assertTrue(Crawl.exists(), "Crawl table does not exists.")
     
+    def testInsertDummyRecords(self):
+        Crawl.insertDummyRecords()
 
     def testAutoIncrement(self):
         session = Session()
@@ -149,7 +163,6 @@ class _Test(TestCase):
         session = Session()
         info(Crawl.getGvizDataTable(session).ToJSon())
         session.close()
-        
 
 if __name__ == "__main__":
     main()

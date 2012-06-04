@@ -6,18 +6,47 @@ from sqlalchemy.exc import OperationalError
 
 class _CrawlHandler(RequestHandler):
     def get(self):
-        self.response.out.write(self.request.path_info)
         self.lastPathInfo = self.request.path_info
         if self.request.path_info == "":
             session = Session()
             try:
                 data_table = Crawl.getGvizDataTable(session)
                 session.close()
+                self.response.out.write(data_table.ToJSonResponse())
+                return
             except OperationalError, e:
                 self.response.set_status(404)
                 self.response.out.write(e.message)
                 return
-            self.response.out.write(data_table.ToJSonResponse())
+
+        if self.request.path_info == "/create":
+            try:
+                Crawl.createTable()
+                self.response.set_status(200)
+                self.response.out.write("Crawl.createTable")
+            except Exception, e:
+                self.response.set_status(500)
+                self.response.out.write(e.message)
+            return
+        
+        if self.request.path_info == "/drop":
+            try:
+                Crawl.dropTable()
+                self.response.set_status(200)
+                self.response.out.write("Crawl.dropTable")
+            except Exception,e :
+                self.response.set_status(500)
+                self.response.out.write(e.message)
+            return
+        if self.request.path_info == "/dummy":
+            try:
+                Crawl.insertDummyRecords()
+                self.response.set_status(200)
+                self.response.out.write("Crawl.insertDummyRecords")
+            except Exception, e:
+                self.response.set_status(500)
+                self.response.out.write(e.message)
+            return     
             
     def getLastPathInfo(self):
         return self.lastPathIngo

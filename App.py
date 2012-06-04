@@ -27,7 +27,7 @@ if __name__ == "__main__":
     cascaded_app = Cascade([html_app, css_app, js_app, _EnvironmentApp(), RecordApp(), CrawlApp()])
     while True:
         from lib.WsgiRunner import PasteThread
-        paste_thread = PasteThread(cascaded_app, 10523, timeout=10)
+        paste_thread = PasteThread(cascaded_app, 10523, timeout=20)
         info("starting PasteThread")
         paste_thread.start()
         info("waiting for PasteThread to stop")

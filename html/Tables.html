@@ -13,54 +13,93 @@
 		"modules":[{"name":"visualization","version":"1"}]
 		}'></script>
 		<script type="text/javascript">
-			google.setOnLoadCallback(drawTable);
-
-			function drawTable() {
-				var wrap = new google.visualization.ChartWrapper();
+			$("#pageRecord").live('pageinit',function() {
+				wrap = new google.visualization.ChartWrapper();
+				wrap.setChartType('Table');
+				wrap.setDataSourceUrl('/api/Record');
+				wrap.setContainerId('tableRecord');
+				wrap.draw();
+			});
+			$("#pageCrawl").live('pageinit',function() {
+				wrap = new google.visualization.ChartWrapper();
 				wrap.setChartType('Table');
 				wrap.setDataSourceUrl('/api/Crawl');
-				wrap.setContainerId('table');
+				wrap.setContainerId('tableCrawl');
 				wrap.draw();
-			}//drawTable
+			});
+			$("#pageSyncStatus").live('pageinit',function() {
+				wrap = new google.visualization.ChartWrapper();
+				wrap.setChartType('Table');
+				wrap.setDataSourceUrl('/api/SyncStatus');
+				wrap.setContainerId('tableSyncStatus');
+				wrap.draw();
+			});
 		</script>
 
-		<div data-role="page" id="page1">
+		<div data-role="page" id="pageRecord">
 			<div data-role="navbar">
 				<ul>
 					<li>
-						<a href="#page1" class="ui-btn-active">One</a>
+						<a href="#pageRecord" class="ui-btn-active">Record</a>
 					</li>
 					<li>
-						<a href="#page2">Two</a>
+						<a href="#pageCrawl">Crawl</a>
+					</li>
+					<li>
+						<a href="#pageSyncStatus">SyncStatus</a>
 					</li>
 				</ul>
 			</div>
 			<div data-role="content">
-				<div id="table"></div>
+				<div id="tableRecord"></div>
 			</div>
 			<div data-role="footer">
 				<h1>Footer1</h1>
 			</div>
 		</div>
 
-		<div data-role="page" id="page2">
+		<div data-role="page" id="pageCrawl">
 			<div data-role="navbar">
 				<ul>
 					<li>
-						<a href="#page1">One</a>
+						<a href="#pageRecord">Record</a>
 					</li>
 					<li>
-						<a href="#page2" class="ui-btn-active">Two</a>
+						<a href="#pageCrawl" class="ui-btn-active">Crawl</a>
+					</li>
+					<li>
+						<a href="#pageSyncStatus">SyncStatus</a>
 					</li>
 				</ul>
 			</div>
 			<div data-role="content">
-				<div id="table"></div>
+				<div id="tableCrawl"></div>
 			</div>
 			<div data-role="footer">
 				<h1>Footer2</h1>
 			</div>
 		</div>
 
+		<div data-role="page" id="pageSyncStatus">
+			<div data-role="navbar">
+				<ul>
+					<li>
+						<a href="#pageRecord">Record</a>
+					</li>
+					<li>
+						<a href="#pageCrawl">Crawl</a>
+					</li>
+					<li>
+						<a href="#pageSyncStatus" class="ui-btn-active">SyncStatus</a>
+					</li>
+				</ul>
+			</div>
+			<div data-role="content">
+				<div id="tableSyncStatus"></div>
+			</div>
+			<div data-role="footer">
+				<h1>Footer2</h1>
+			</div>
+		</div>
 	</body>
 </html>
