@@ -13,27 +13,42 @@
 		"modules":[{"name":"visualization","version":"1"}]
 		}'></script>
 		<script type="text/javascript">
-			$("#pageRecord").live('pageinit',function() {
-				wrap = new google.visualization.ChartWrapper();
-				wrap.setChartType('Table');
-				wrap.setDataSourceUrl('/api/Record');
-				wrap.setContainerId('tableRecord');
-				wrap.draw();
-			});
-			$("#pageCrawl").live('pageinit',function() {
-				wrap = new google.visualization.ChartWrapper();
-				wrap.setChartType('Table');
-				wrap.setDataSourceUrl('/api/Crawl');
-				wrap.setContainerId('tableCrawl');
-				wrap.draw();
-			});
-			$("#pageSyncStatus").live('pageinit',function() {
-				wrap = new google.visualization.ChartWrapper();
-				wrap.setChartType('Table');
-				wrap.setDataSourceUrl('/api/SyncStatus');
-				wrap.setContainerId('tableSyncStatus');
-				wrap.draw();
-			});
+			$("#pageRecord").live('pageshow', drawRecord);
+			function drawRecord(event) {
+				//alert("drawRecord");
+				var wrapRecord = new google.visualization.ChartWrapper({
+					"dataSourceUrl" : "/api/Record",
+					"refreshInterval" : 5
+				});
+				wrapRecord.setChartType('Table');
+				wrapRecord.setContainerId('tableRecord');
+				wrapRecord.draw();
+			};
+			$("#pageCrawl").live('pageshow', drawCrawl);
+			function drawCrawl(event) {
+				//alert("drawCrawl");
+				var wrapCrawl;
+				wrapCrawl = new google.visualization.ChartWrapper({
+					"dataSourceUrl" :'http://spreadsheets.google.com/tq?key=pCQbetd-CptGXxxQIG7VFIQ&pub=1',
+					"dataSourceUrl" :'/api/Crawl',
+					"refreshInterval" : 5
+				});
+				wrapCrawl.setChartType('Table');
+				wrapCrawl.setRefreshInterval(1);
+				wrapCrawl.setContainerId('tableCrawl');
+				wrapCrawl.draw();
+			};
+			$("#pageSyncStatus").live('pageshow', drawSyncStatus);
+			function drawSyncStatus(event) {
+				//alert("drawSyncStatus");
+				wrapSyncStatus = new google.visualization.ChartWrapper({
+					"dataSourceUrl" :'/api/SyncStatus',
+					"refreshInterval" : 5
+				});
+				wrapSyncStatus.setChartType('Table');
+				wrapSyncStatus.setContainerId('tableSyncStatus');
+				wrapSyncStatus.draw();
+			};
 		</script>
 
 		<div data-role="page" id="pageRecord">
@@ -54,7 +69,13 @@
 				<div id="tableRecord"></div>
 			</div>
 			<div data-role="footer">
-				<h1>Footer1</h1>
+				<span onclick="dropTable()" data-role="button">drop</span>
+				<script>
+					function dropTable() {
+						$.ajax('create');
+						$.mobile.activePage().trigger('create');
+					}
+				</script>
 			</div>
 		</div>
 
@@ -73,10 +94,29 @@
 				</ul>
 			</div>
 			<div data-role="content">
-				<div id="tableCrawl"></div>
+				<div id="tableCrawl">
+					koko
+				</div>
 			</div>
 			<div data-role="footer">
-				<h1>Footer2</h1>
+				<span onclick="dropCrawl()" data-role="button">drop</span>
+				<script>
+					function dropCrawl() {
+						$.ajax('/api/Crawl/drop');
+					}
+				</script>
+				<span onclick="createCrawl()" data-role="button">create</span>
+				<script>
+					function createCrawl() {
+						$.ajax('/api/Crawl/create');
+					}
+				</script>
+				<span onclick="dummyCrawl()" data-role="button">dummy</span>
+				<script>
+					function dummyCrawl() {
+						$.ajax('/api/Crawl/dummy');
+					}
+				</script>
 			</div>
 		</div>
 
