@@ -36,10 +36,34 @@ def exception(message):
     _logger = _logging.getLogger(_getNameInPreviousFrame())
     _logger.exception(message)
 
+_userDirectory = None
+def getUserDirectory():
+    if _userDirectory is not None:
+        return _userDirectory
+    import os.path
+    home_directory = os.path.expanduser("~")
+    user_directory = os.path.join(home_directory, "obomb")
+    if not os.path.exists(user_directory):
+        import os
+        os.mkdir(user_directory)
+        if not os.path.exists(user_directory):
+            raise IOError("User directory '" + user_directory + "' cannot be created.")
+    return user_directory
+
+def _getSqliteUrl():
+    import os.path
+    sqlite_path = os.path.join(getUserDirectory(), "obomb.db")
+    info(sqlite_path) 
+    sqlite_path_slash = sqlite_path.replace(os.path.sep, '/')
+    info(sqlite_path_slash)
+    sqlite_url = "sqlite:///" + sqlite_path_slash
+    info(sqlite_url)
+    return sqlite_url
+    
 #from logging import debug, info, warn, error, critical, exception
 from unittest import TestCase, main
 from sqlalchemy import create_engine as _create_engine
-engine = _create_engine("sqlite:///test3.sqlite", echo=False)
+engine = _create_engine(_getSqliteUrl(), echo=False)
 from sqlalchemy.orm.session import sessionmaker as _sessionmaker
 Session = _sessionmaker(bind=engine, autocommit=False)
 PersistentSession = _sessionmaker(bind=engine, autocommit=True)
@@ -53,7 +77,7 @@ def utcnow():
     dt2 = dt.replace(tzinfo=tzutc())
     return dt2
 
-class _Test(TestCase):
+class _TestConfig(TestCase):
     def setUp(self):
         pass
     
@@ -66,7 +90,11 @@ class _Test(TestCase):
         self.assertIsInstance(l, _datetime, "now() should returns an instance off datetime")
         self.assertIsNone(l.tzinfo, "now() should returns native datetime instance")
         info(l.ctime())
-
+    
+    def testDatabase(self):
+        session = Session()
+        session.close()
+    
     def testStackTrace(self):
         info("testStackTrace")
 
