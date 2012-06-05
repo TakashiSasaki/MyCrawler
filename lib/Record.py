@@ -14,6 +14,8 @@ class Record(DeclarativeBase, GvizDataTableMixin):
     __tablename__ = "Record"
     __table_args__ = {'sqlite_autoincrement': True}
     
+            
+    
     objectId = Column(Integer, primary_key=True, index=True, nullable=False) #unique only on this database
     def getObjectId(self):
         """objectId is the primary key and automatically set"""
@@ -78,7 +80,7 @@ class Record(DeclarativeBase, GvizDataTableMixin):
         assert isinstance(last_seen, datetime)
         assert last_seen.tzinfo is not None
         self.lastSeen = last_seen
-    
+
     jsonString = Column(String(), nullable=True) #serialized data
     def getJsonString(self):
         return self.jsonString
@@ -137,6 +139,7 @@ class Record(DeclarativeBase, GvizDataTableMixin):
         except:
             pass
 
+
     @classmethod
     def dropAndCreateTable(cls, message):
             print(message)
@@ -145,6 +148,32 @@ class Record(DeclarativeBase, GvizDataTableMixin):
                 cls.dropTable()
                 cls.createTable()
 
+    @classmethod
+    def dummy(cls, n_dummy):
+        n_before = cls.count()
+        session = Session()
+        record = None
+        for x in range(n_dummy):
+            crawl = Crawl.dummy()
+            from uuid import uuid1
+            record = Record()
+            record.crawlId = crawl.crawlId
+            record.uri = "http://example.com/"+uuid1().get_hex()
+            record.url = "http://exmaple.com/"+uuid1().get_hex()
+            from random import randint
+            record.size = randint()
+            record.lastSeen = utcnow()
+            record.lastModified = utcnow()
+            record.jsonString = {}
+            record.belongsTo = None
+            record.exhaustive = False
+            session.add(record)
+        session.commit()
+        n_after = cls.count()
+        assert n_before + n_dummy == n_after
+        assert isinstance(record, Record)
+        return record
+    
 
 class MemoMap(DeclarativeBase):
     __tablename__ = "MemoMap"
@@ -203,7 +232,7 @@ class _Test(TestCase):
         session.add(record)
         try:
             session.commit()
-        except IntegrityError,e:
+        except IntegrityError, e:
             session.close()
             Record.dropAndCreateTable(e.message)
             self.fail(e.message)

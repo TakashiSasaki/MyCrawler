@@ -94,18 +94,26 @@ class Crawl(DeclarativeBase, GvizDataTableMixin, TableMixin):
         return self.getNumberOfProcessedBytes() / self.getElapsedSeconds()
     
     @classmethod
-    def insertDummyRecords(cls):
+    def dummy(cls, n_dummy = 1):
         session = Session()
         from uuid import uuid1
-        for x in [1,2,3]:
-            crawl = Crawl()
-            crawl.begin()
-            crawl.end()
-            crawl.agentId = uuid1().get_hex()
-            session.add(crawl)
-        session.commit() 
+        n_before = cls.count()
+        dummy_crawl = None
+        for x in range(n_dummy):
+            dummy_crawl = Crawl()
+            assert isinstance(dummy_crawl, Crawl)
+            dummy_crawl.begin()
+            dummy_crawl.end()
+            dummy_crawl.agentId = uuid1().get_hex()
+            session.add(dummy_crawl)
+        session.commit()
+        n_after = cls.count()
+        assert n_before + n_dummy == n_after
+        info(dummy_crawl)
+        assert isinstance(dummy_crawl, Crawl)
+        return dummy_crawl
     
-class _Test(TestCase):
+class _TestLibCrawl(TestCase):
     def setUp(self):
         #DeclarativeBase.metadata.create_all(engine)
         #if Crawl.exists():
@@ -114,8 +122,9 @@ class _Test(TestCase):
         Crawl.createTable()
         self.assertTrue(Crawl.exists(), "Crawl table does not exists.")
     
-    def testInsertDummyRecords(self):
-        Crawl.insertDummyRecords()
+    def testDummy(self):
+        dummy = Crawl.dummy()
+        self.assertIsInstance(dummy, Crawl)
 
     def testAutoIncrement(self):
         session = Session()

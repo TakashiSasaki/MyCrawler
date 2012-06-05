@@ -20,12 +20,13 @@ class TableMixin(object):
                 self.response.out.write(data_table.ToResponse(tqx=tqx))
             except Exception, e:
                 self.response.set_status(500)
+                assert len(e.message) > 0
                 self.response.out.write(e.message)
             return True
 
         if self.request.path_info == "/create":
             try:
-                self.table.createTable()
+                self.table.create()
                 self.response.set_status(200)
                 self.response.out.write("%s.createTable" % self.table.getTable())
             except Exception, e:
@@ -35,7 +36,7 @@ class TableMixin(object):
         
         if self.request.path_info == "/drop":
             try:
-                self.table.dropTable()
+                self.table.drop()
                 self.response.set_status(200)
                 self.response.out.write("%s.dropTable" % self.table.getTable())
             except Exception,e :
@@ -45,7 +46,7 @@ class TableMixin(object):
 
         if self.request.path_info == "/dummy":
             try:
-                self.table.insertDummyRecords()
+                self.table.dummy()
                 self.response.set_status(200)
                 self.response.out.write("%s.insertDummyRecords" % self.table.getTable())
             except Exception, e:
