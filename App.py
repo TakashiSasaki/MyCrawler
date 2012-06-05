@@ -40,26 +40,39 @@ if __name__ == "__main__":
     import webbrowser
     webbrowser.open("http://localhost:10523/Record.html", autoraise=1)
 
-class _Test(TestCase):
-    crawlAppPort = 20010
+class _TestApp(TestCase):
     
     def setUp(self):
+        TestCase.setUp(self)
+        from random import randint
+        self.port = randint(10000,20000)
         from lib.WsgiRunner import PasteThread
-        self.pasteThread = PasteThread(CrawlApp(), self.crawlAppPort, timeout=5)
+        self.pasteThread = PasteThread(CrawlApp(), self.port, timeout=5)
+        self.assertIsNotNone(self.pasteThread.server)
+        self.assertFalse(self.pasteThread.isAlive())
+        self.assertTrue(self.pasteThread.server.running)
         self.pasteThread.start()
         self.assertTrue(self.pasteThread.isAlive())
+        self.assertTrue(self.pasteThread.server.running)
         import time
         time.sleep(1)
         
-    def test(self):
+    def testApiCrawl(self):
         from httplib import HTTPConnection
-        http_connection = HTTPConnection("localhost", port=self.crawlAppPort)
+        http_connection = HTTPConnection("localhost", port=self.port)
         http_connection.request('GET', "/api/Crawl")
         response = http_connection.getresponse()
-        self.assertTrue(response.status == 404 or response.status == 200)
+        info("reading body,m %d " % response.status)
+        body = response.read()
+        info(body)
+        self.assertTrue(response.status == 500 or response.status == 404 or response.status == 200)
+        self.assertGreater(len(body), 1)
+        info("closing http connection")
+        http_connection.close()
     
     def tearDown(self):
-        info("shutting down")
+        info("shutting down PasteThread")
         self.pasteThread.shutdown()
         info("joining")
         self.pasteThread.join()
+        TestCase.tearDown(self)
