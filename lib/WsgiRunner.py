@@ -63,9 +63,7 @@ class PasteThread(Thread):
             self.name = app.__class__.__name__
         else:
             self.name = app.__name__
-        
-    def run(self):
-        debug("running " + self.name + " by paste on localhost:" + str(self.app))
+
         from paste import httpserver
         self.server = httpserver.serve(self.app, host='127.0.0.1', port=str(self.port),
                          start_loop=False,
@@ -88,13 +86,46 @@ class PasteThread(Thread):
             self.server.timeout = 1
         assert self.server.timeout == 1
         self.server.handle_timeout = _Watchdog(self.server, limit=self.timeout).getTimeoutHandler()
-        self.server.serve_forever()
-        debug("server_forever finished")
         
-    
+    def run(self):
+        info("running " + self.name + " by paste on localhost:" + str(self.app))
+        self.server.serve_forever()
+        info("server_forever finished")
     
     def shutdown(self):
         self.server.server_close()
+
+class _WsgiRunnerTest(TestCase):
+    def setUp(self):
+        TestCase.setUp(self)
+        from random import randint
+        self.port = randint(10000, 20000)
+        self.pasteThread = PasteThread(demo_app, self.port)
+        self.pasteThread.start()
+        self.assertIsNotNone(self.pasteThread.server)
+        self.assertTrue(self.pasteThread.isAlive())
+        self.assertTrue(self.pasteThread.server.running)
+        info(self.pasteThread.server)
+        
+    def testDemoApp(self):
+        from httplib import HTTPConnection
+        http_connection = HTTPConnection('localhost', self.port)
+        http_connection.request("GET", 'http://localhost:%d/' % self.port)
+        response = http_connection.getresponse()
+        body = response.read()
+        self.assertGreater(len(body), 100)
+        self.assertTrue(self.pasteThread.isAlive())
+    
+    def testShutdown(self):
+        self.assertTrue(self.pasteThread.isAlive())
+        self.pasteThread.shutdown()
+        self.pasteThread.join(5)
+        self.assertFalse(self.pasteThread.isAlive())
+    
+    def tearDown(self):
+        self.pasteThread.shutdown()
+        self.pasteThread.join()
+        TestCase.tearDown(self)
 
 import webbrowser
 
