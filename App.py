@@ -31,7 +31,10 @@ if __name__ == "__main__":
         debug("starting PasteThread")
         paste_thread.start()
         debug("waiting for PasteThread to stop")
-        paste_thread.join()
+        try:
+            paste_thread.join()
+        except KeyError, e:
+            pass
         info("restarting PasteThread")
         
     import webbrowser

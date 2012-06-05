@@ -1,153 +1,153 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<title>Tables</title>
-		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<link rel="stylesheet" href="jquery.mobile-1.1.0.min.css" />
-		<script src="jquery-1.7.1.min.js"></script>
-		<script src="jquery.mobile-1.1.0.min.js"></script>
-	</head>
-	<body>
-		<script type="text/javascript"
-		src='https://www.google.com/jsapi?autoload={
-		"modules":[{"name":"visualization","version":"1"}]
-		}'></script>
-		<script type="text/javascript">
-			$("#pageRecord").live('pageshow', drawRecord);
-			function drawRecord(event) {
-				//alert("drawRecord");
-				var wrapRecord = new google.visualization.ChartWrapper({
-					"dataSourceUrl" : "/api/Record",
-					//"dataSourceUrl" : "http://spreadsheets.google.com/tq?key=pCQbetd-CptGXxxQIG7VFIQ&pub=1",
-					"refreshInterval" : 5
-				});
-				wrapRecord.setChartType('Table');
-				wrapRecord.setContainerId('tableRecord');
-				wrapRecord.draw();
-			}
+    <head>
+        <title>Tables</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="jquery.mobile-1.1.0.min.css" />
+        <script type="text/javascript" src="jquery-1.7.1.min.js">
+            null;
+        </script>
+        <script src="jquery.mobile-1.1.0.min.js">
+            null;
+        </script>
+    </head>
+    <body>
+        <script type="text/javascript"
+        src='https://www.google.com/jsapi?autoload={
+        "modules":[{"name":"visualization","version":"1"}]
+        }'>
+            null;
+        </script>
+        <script type="text/javascript">
+            $("#pageRecord").live('pageshow', function() {
+                queryTable("Record")
+            });
+            $("#pageCrawl").live('pageshow', function() {
+                queryTable("Crawl")
+            });
+            $("#pageSyncStatus").live('pageshow', function() {
+                queryTable("SyncStatus")
+            });
+            function dropTable(table_name) {
+                $.ajax('/api/' + table_name + '/drop', {
+                    "async" : false
+                });
+                $('#table' + table_name).text("dropping table '" + table_name + "'");
+                queryTable(table_name);
+            }
 
+            function createTable(table_name) {
+                $.ajax('/api/' + table_name + '/create', {
+                    "async" : false
+                });
+                queryTable(table_name);
+            }
 
-			$("#pageCrawl").live('pageshow', queryCrawl);
-			function queryCrawl() {
-				query = new google.visualization.Query("/api/Crawl", {"sendMethod": "xhr"});
-				query.setTimeout(10);
-				query.setRefreshInterval(5);
-				query.send(function (response) {
-					data_table = response.getDataTable();
-					wrapCrawl = new google.visualization.ChartWrapper();
-					wrapCrawl.setDataTable(data_table);
-					wrapCrawl.setChartType('Table');
-					wrapCrawl.setContainerId('tableCrawl');
-					wrapCrawl.draw();
-				});
-			}
+            function dummyTable(table_name) {
+                $.ajax('/api/' + table_name + '/dummy', {
+                    "async" : false
+                });
+                queryTable(table_name);
+            }
 
+            function queryTable(table_name) {
+                query = new google.visualization.Query("/api/" + table_name, {
+                    //"sendMethod" : "xhr"
+                });
+                query.setTimeout(60);
+                //query.setRefreshInterval(10);
+                query.send(function(response) {
+                    if (response.isError()) {
+                        $('#table' + table_name).text(response.getDetailedMessage());
+                    } else if (response.hasWarning()) {
+                        $('#table' + table_name).text(response.getDetailedMessage());
+                    } else {
+                        data_table = response.getDataTable();
+                        wrapper = new google.visualization.ChartWrapper();
+                        wrapper.setDataTable(data_table);
+                        wrapper.setChartType('Table');
+                        wrapper.setContainerId('table' + table_name);
+                        wrapper.draw();
+                    }
+                });
+            }//queryTable
+        </script>
 
-			$("#pageSyncStatus").live('pageshow', drawSyncStatus);
-			function drawSyncStatus(event) {
-				//alert("drawSyncStatus");
-				wrapSyncStatus = new google.visualization.ChartWrapper({
-					"dataSourceUrl" : '/api/SyncStatus',
-					"refreshInterval" : 5
-				});
-				wrapSyncStatus.setChartType('Table');
-				wrapSyncStatus.setContainerId('tableSyncStatus');
-				wrapSyncStatus.draw();
-			}
-		</script>
+        <div data-role="page" id="pageRecord">
+            <div data-role="navbar">
+                <ul>
+                    <li>
+                        <a href="#pageRecord" class="ui-btn-active">Record</a>
+                    </li>
+                    <li>
+                        <a href="#pageCrawl">Crawl</a>
+                    </li>
+                    <li>
+                        <a href="#pageSyncStatus">SyncStatus</a>
+                    </li>
+                </ul>
+            </div>
+            <div data-role="content">
+                <div id="tableRecord"></div>
+            </div>
+            <div data-role="footer">
+                <span onclick="dropTable('Record')" data-role="button">drop</span>
+                <span onclick="createTable('Record')" data-role="button">create</span>
+                <span onclick="dummyTable('Record')" data-role="button">dummy</span>
+                <span onclick="queryTable('Record')" data-role="button">query</span>
+            </div>
+        </div>
 
-		<div data-role="page" id="pageRecord">
-			<div data-role="navbar">
-				<ul>
-					<li>
-						<a href="#pageRecord" class="ui-btn-active">Record</a>
-					</li>
-					<li>
-						<a href="#pageCrawl">Crawl</a>
-					</li>
-					<li>
-						<a href="#pageSyncStatus">SyncStatus</a>
-					</li>
-				</ul>
-			</div>
-			<div data-role="content">
-				<div id="tableRecord"></div>
-			</div>
-			<div data-role="footer">
-				<span onclick="dropTable()" data-role="button">drop</span>
-				<script>
-					function dropTable() {
-						$.ajax('create');
-						$.mobile.activePage().trigger('create');
-					}
-				</script>
-			</div>
-		</div>
+        <div data-role="page" id="pageCrawl">
+            <div data-role="navbar">
+                <ul>
+                    <li>
+                        <a href="#pageRecord">Record</a>
+                    </li>
+                    <li>
+                        <a href="#pageCrawl" class="ui-btn-active">Crawl</a>
+                    </li>
+                    <li>
+                        <a href="#pageSyncStatus">SyncStatus</a>
+                    </li>
+                </ul>
+            </div>
+            <div data-role="content">
+                <div id="tableCrawl">
+                    koko
+                </div>
+            </div>
+            <div data-role="footer">
+                <span onclick="dropTable('Crawl')" data-role="button">drop</span>
+                <span onclick="createTable('Crawl')" data-role="button">create</span>
+                <span onclick="dummyTable('Crawl')" data-role="button">dummy</span>
+                <span onclick="queryTable('Crawl')" data-role="button">query</span>
+            </div>
+        </div>
 
-		<div data-role="page" id="pageCrawl">
-			<div data-role="navbar">
-				<ul>
-					<li>
-						<a href="#pageRecord">Record</a>
-					</li>
-					<li>
-						<a href="#pageCrawl" class="ui-btn-active">Crawl</a>
-					</li>
-					<li>
-						<a href="#pageSyncStatus">SyncStatus</a>
-					</li>
-				</ul>
-			</div>
-			<div data-role="content">
-				<div id="tableCrawl">
-					koko
-				</div>
-			</div>
-			<div data-role="footer">
-				<span onclick="dropCrawl()" data-role="button">drop</span>
-				<script>
-					function dropCrawl() {
-						$.ajax('/api/Crawl/drop');
-						queryCrawl();
-					}
-				</script>
-				<span onclick="createCrawl()" data-role="button">create</span>
-				<script>
-					function createCrawl() {
-						$.ajax('/api/Crawl/create');
-						queryCrawl();
-					}
-				</script>
-				<span onclick="dummyCrawl()" data-role="button">dummy</span>
-				<script>
-					function dummyCrawl() {
-						$.ajax('/api/Crawl/dummy');
-						queryCrawl();
-					}
-				</script>
-			</div>
-		</div>
-
-		<div data-role="page" id="pageSyncStatus">
-			<div data-role="navbar">
-				<ul>
-					<li>
-						<a href="#pageRecord">Record</a>
-					</li>
-					<li>
-						<a href="#pageCrawl">Crawl</a>
-					</li>
-					<li>
-						<a href="#pageSyncStatus" class="ui-btn-active">SyncStatus</a>
-					</li>
-				</ul>
-			</div>
-			<div data-role="content">
-				<div id="tableSyncStatus"></div>
-			</div>
-			<div data-role="footer">
-				<h1>Footer2</h1>
-			</div>
-		</div>
-	</body>
+        <div data-role="page" id="pageSyncStatus">
+            <div data-role="navbar">
+                <ul>
+                    <li>
+                        <a href="#pageRecord">Record</a>
+                    </li>
+                    <li>
+                        <a href="#pageCrawl">Crawl</a>
+                    </li>
+                    <li>
+                        <a href="#pageSyncStatus" class="ui-btn-active">SyncStatus</a>
+                    </li>
+                </ul>
+            </div>
+            <div data-role="content">
+                <div id="tableSyncStatus"></div>
+            </div>
+            <div data-role="footer">
+                <span onclick="dropTable('SyncStatus')" data-role="button">drop</span>
+                <span onclick="createTable('SyncStatus')" data-role="button">create</span>
+                <span onclick="dummyTable('SyncStatus')" data-role="button">dummy</span>
+                <span onclick="queryTable('SyncStatus')" data-role="button">query</span>
+            </div>
+        </div>
+    </body>
 </html>

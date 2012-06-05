@@ -65,7 +65,7 @@ class PasteThread(Thread):
             self.name = app.__name__
         
     def run(self):
-        print ("running " + self.name + " by paste on localhost:" + str(self.app))
+        debug("running " + self.name + " by paste on localhost:" + str(self.app))
         from paste import httpserver
         self.server = httpserver.serve(self.app, host='127.0.0.1', port=str(self.port),
                          start_loop=False,
