@@ -1,0 +1,23 @@
+#appname:obomb
+#publisher:Takashi SASAKI
+#url:http://twitter.com/TakashiSasaki
+#image:default_app_logo.png
+#appid:cx.windy.obomb
+#desc:Object oriented metadatabase
+#type:desktop
+#guid:384dd6ef-1acb-4ab1-a1c8-06bc8c997466
+runtime:1.2.0.RC6e
+tiapp:1.2.0.RC6e
+tifilesystem:1.2.0.RC6e
+tiplatform:1.2.0.RC6e
+tiui:1.2.0.RC6e
+ticodec:1.2.0.RC6e
+tidatabase:1.2.0.RC6e
+timedia:1.2.0.RC6e
+timonkey:1.2.0.RC6e
+tinetwork:1.2.0.RC6e
+tiprocess:1.2.0.RC6e
+tiworker:1.2.0.RC6e
+ruby:1.2.0.RC6e
+php:1.2.0.RC6e
+python:1.2.0.RC6e

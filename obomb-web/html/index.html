@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>obomb-web</title>
+	</head>
+	<body>
+		<h1>Welcome obomb web</h1>
+		{% if is_logged_in %}
+		You are already logged in.
+		<table>
+			<tr>
+				<td>Logged in with</td><td></td>
+			</tr>
+			<tr>
+				<td>Google</td><td>{% if logged_in_with_google %}Yes{% else %}No{% endif %}</td>
+				<td><a href="/login_google">Login</a></td>
+			</tr>
+			<tr>
+				<td>Twitter</td><td>{% if logged_in_with_twitter %}Yes{% else %}No{% endif %}</td>
+				<td><a href="/login_twitter">Login</a></td>
+			</tr>
+			<tr>
+				<td>Yahoo Japan</td><td>{% if logged_in_with_yahoojapan %}Yes{% else %}No{% endif %}</td>
+				<td><a href="/login_yahoojapan">Login</a></td>
+			</tr>
+			<tr>
+				<td>mixi</td><td>{% if logged_in_with_yahoojapan %}Yes{% else %}No{% endif %}</td>
+				<td><a href="/login_mixi">Login</a></td>
+			</tr>
+			<tr>
+				<td>mixi</td><td>{% if logged_in_with_mixi %}Yes{% else %}No{% endif %}</td>
+				<td><a href="/login_google">Login</a></td>
+			</tr>
+		</table>
+	</body>
+</html>
