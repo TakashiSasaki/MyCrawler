@@ -1,0 +1,6 @@
+{% if session_id %}
+Your session ID is {{ session_id }}. You can <a href="/clear">clear</a> the session
+if you finish current work on Obomb Web.
+{% else %}
+You may visit this page accidentally. Visit the top page of Obomb Web to start over.
+{% endif %}

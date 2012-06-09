@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<link  rel="stylesheet" type="text/css" href="/css/header.css"/>
+		<link  rel="stylesheet" type="text/css" href="/css/footer.css"/>
+		<title>Login to Obomb Web with Google Acount</title>
+	</head>
+	<body>
+		<header>
+			{% include "header.djhtml" %}
+		</header>
+		<h1>Login to Obomb Web with Google Acount</h1>
+		<p>
+			{% if  google_user_identifier %}
+			You are currently logged into Obomb Web with Google Account
+			identified as {{ google_user_email }}.
+			You can <a href="{{google_logout_url}}">logout</a> of it.
+			{% else %}
+			You are currently not logged into Obomb Web with Google Account.
+			If you have Google Account, you can <a href="{{google_login_url}}">login</a> with it.
+			If not, create it first or use another account.
+			{% endif %}
+		</p>
+		<p>
+			{% if number_of_obomb_user_entities > 1 %}
+			You have {{number_of_obomb_user_entities}} user entities on Obomb Web.
+			It is not an error and this situation is
+			caused because you may login with different account
+			on different browsers or different PCs.
+			We provide the way to merge and integrate them in the future.
+			Thank you for your patience.
+			{% endif %}
+		</p>
+		<p>
+			You are currently using the following accounts.
+		</p>
+		<table border="1px">
+			<tr>
+				<td>Google</td><td>{% if logged_in_with_google %}Yes{% else %}No{% endif %}</td>
+				<td><a href="/login_google">Login</a></td>
+			</tr>
+			<tr>
+				<td>Twitter</td><td>{% if logged_in_with_twitter %}Yes{% else %}No{% endif %}</td>
+				<td><a href="/login_twitter">Login</a></td>
+			</tr>
+			<tr>
+				<td>Yahoo Japan</td><td>{% if logged_in_with_yahoojapan %}Yes{% else %}No{% endif %}</td>
+				<td><a href="/login_yahoojapan">Login</a></td>
+			</tr>
+			<tr>
+				<td>mixi</td><td>{% if logged_in_with_yahoojapan %}Yes{% else %}No{% endif %}</td>
+				<td><a href="/login_mixi">Login</a></td>
+			</tr>
+		</table><a href="/logout">Log out from Obomb Web</a>
+		<footer>
+			{% include "footer.djhtml" %}
+		</footer>
+	</body>
+</html>

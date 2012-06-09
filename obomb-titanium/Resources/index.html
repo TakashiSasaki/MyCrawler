@@ -1,0 +1,69 @@
+<html>
+	<head>
+		<title>OBOMB - Object Oriented Metadatabase</title>
+		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+	</head>
+	<body>
+		<section>
+			<h1>Make Index Page</h1>
+			<script>
+				function onclickMakeIndexPage() {
+					var root_directory = $("#root_directory").val();
+					var dig_index = new DigIndex.DigIndex(root_directory);
+					$("#decoded_root_directory").text(dig_index.GetDecodedRootDirectory());
+				}
+			</script>
+			<input type="text" size="100" id="root_directory">
+			</input>
+			<input type="button" value="Make Index Page" onclick="onclickMakeIndexPage();">
+			</input>
+			<input type="text" size="100" disabled="true" id="decoded_root_directory">
+			</input>
+			<input type="button" onclick="OpenFileCrawlerWindow();" value="open file crawler"/>
+			<script type="text/javascript">
+				var file_crawler_window = null;
+				function OpenFileCrawlerWindow() {
+					if(file_crawler_window == null || !file_crawler_window.isActive()) {
+						file_crawler_window = Titanium.UI.createWindow({
+							id : "FileCrawlerWindow",
+							url : "app://FileCrawlerWindow.html"
+						});
+						file_crawler_window.open();
+					} else {
+						file_crawler_window.focus();
+					}
+				}
+			</script>
+			<input type="button" onclick="OpenStatusWindow();" value="open status window"/>
+			<script>
+				var statusWindow = null;
+				function OpenStatusWindow() {
+					if(statusWindow == null || !statusWindow.isActive()) {
+						statusWindow = Titanium.UI.createWindow({
+							id : "UtatusWindow",
+							url : "app://tatusWindow.html"
+						});
+						statusWindow.open();
+					} else {
+						statusWindow.focus();
+					}
+				}
+			</script>
+			<input type="button" onclick="OpenUpdateWindow();" value="open update window"/>
+			<script>
+				var update_window = null;
+				function OpenUpdateWindow() {
+					if(update_window == null || !update_window.isActive()) {
+						update_window = Titanium.UI.createWindow({
+							id : "UpdateWindow",
+							url : "app://UpdateWindow.html"
+						});
+						update_window.open();
+					} else {
+						update_window.focus();
+					}
+				}
+			</script>
+		</section>
+	</body>
+</html>
